@@ -123,10 +123,17 @@ struct RecipeRowView: View {
                     .font(.headline)
                     .foregroundStyle(.primary)
                 Spacer()
-                if isFavorite {
-                    Image(systemName: "star.fill")
-                        .foregroundStyle(.yellow)
-                        .font(.footnote)
+                HStack(spacing: 5) {
+                    if recipe.samplePhotoAssetName != nil || recipe.samplePhotoURL != nil {
+                        Image(systemName: "photo.fill")
+                            .foregroundStyle(.tertiary)
+                            .font(.caption2)
+                    }
+                    if isFavorite {
+                        Image(systemName: "star.fill")
+                            .foregroundStyle(.yellow)
+                            .font(.footnote)
+                    }
                 }
             }
 
