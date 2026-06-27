@@ -20,6 +20,7 @@
 		AA100000000000000000000B /* SharedComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA200000000000000000000B /* SharedComponents.swift */; };
 		AA100000000000000000000C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA200000000000000000000C /* Assets.xcassets */; };
 		AA100000000000000000000D /* SwiftData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA200000000000000000000E /* SwiftData.framework */; };
+		AA100000000000000000000E /* PhotosUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA200000000000000000000F /* PhotosUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		AA200000000000000000000C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA200000000000000000000D /* RX100Recipes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RX100Recipes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA200000000000000000000E /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
+		AA200000000000000000000F /* PhotosUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PhotosUI.framework; path = System/Library/Frameworks/PhotosUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA100000000000000000000D /* SwiftData.framework in Frameworks */,
+				AA100000000000000000000E /* PhotosUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				AA200000000000000000000E /* SwiftData.framework */,
+				AA200000000000000000000F /* PhotosUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

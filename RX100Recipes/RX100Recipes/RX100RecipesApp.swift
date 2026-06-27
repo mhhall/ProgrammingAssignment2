@@ -9,7 +9,7 @@ struct RX100RecipesApp: App {
         WindowGroup {
             ContentView()
                 .environment(store)
-                .modelContainer(for: [RecipeNote.self, RecipeFavorite.self])
+                .modelContainer(for: [RecipeNote.self, RecipeFavorite.self, RecipeUserPhoto.self])
         }
     }
 }

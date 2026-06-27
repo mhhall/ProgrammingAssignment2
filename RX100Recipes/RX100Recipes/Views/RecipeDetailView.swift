@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct RecipeDetailView: View {
     let recipe: Recipe
@@ -7,12 +8,18 @@ struct RecipeDetailView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \RecipeNote.date, order: .reverse) private var allNotes: [RecipeNote]
     @Query private var allFavorites: [RecipeFavorite]
+    @Query(sort: \RecipeUserPhoto.date, order: .forward) private var allUserPhotos: [RecipeUserPhoto]
 
     @State private var showAddNote = false
     @State private var showAdvancedSettings = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
 
     private var recipeNotes: [RecipeNote] {
         allNotes.filter { $0.recipeId == recipe.id }
+    }
+
+    private var recipeUserPhotos: [RecipeUserPhoto] {
+        allUserPhotos.filter { $0.recipeId == recipe.id }
     }
 
     private var isFavorite: Bool {
@@ -28,6 +35,18 @@ struct RecipeDetailView: View {
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
+            // Sample Photo Section
+            if let url = recipe.samplePhotoURL {
+                Section {
+                    samplePhotoView(url: url)
+                } header: {
+                    Text("Sample Photo")
+                        .font(.subheadline.weight(.semibold))
+                }
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            }
+
             // Settings Section
             Section {
                 if let cs = recipe.creativeStyleSettings {
@@ -39,6 +58,9 @@ struct RecipeDetailView: View {
                 Text("Camera Settings")
                     .font(.subheadline.weight(.semibold))
             }
+
+            // My Shots Section
+            myShotsSection
 
             // Notes Section
             notesSection
@@ -60,6 +82,18 @@ struct RecipeDetailView: View {
         .sheet(isPresented: $showAddNote) {
             AddNoteView(recipeId: recipe.id, recipeName: recipe.name)
         }
+        .onChange(of: selectedPhotoItem) { _, newItem in
+            guard let newItem else { return }
+            Task {
+                if let data = try? await newItem.loadTransferable(type: Data.self) {
+                    let compressed = UIImage(data: data).flatMap {
+                        $0.jpegData(compressionQuality: 0.8)
+                    } ?? data
+                    context.insert(RecipeUserPhoto(recipeId: recipe.id, imageData: compressed))
+                }
+                selectedPhotoItem = nil
+            }
+        }
     }
 
     // MARK: - Header
@@ -76,7 +110,17 @@ struct RecipeDetailView: View {
                 .font(.body)
                 .foregroundStyle(.primary)
 
-            if !recipe.source.isEmpty {
+            if let url = recipe.sourceURL {
+                Link(destination: url) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "link.circle")
+                            .font(.caption)
+                        Text("Source: \(recipe.source)")
+                            .font(.caption)
+                    }
+                    .foregroundStyle(Color.accentColor)
+                }
+            } else if !recipe.source.isEmpty {
                 HStack(spacing: 4) {
                     Image(systemName: "info.circle")
                         .font(.caption)
@@ -99,6 +143,39 @@ struct RecipeDetailView: View {
                             .foregroundStyle(.secondary)
                     }
                 }
+            }
+        }
+    }
+
+    // MARK: - Sample Photo
+
+    @ViewBuilder
+    private func samplePhotoView(url: URL) -> some View {
+        AsyncImage(url: url) { phase in
+            switch phase {
+            case .success(let image):
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxHeight: 240)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            case .failure:
+                HStack {
+                    Image(systemName: "photo")
+                        .foregroundStyle(.secondary)
+                    Text("Unable to load photo")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, minHeight: 60)
+            case .empty:
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color(.secondarySystemFill))
+                    .frame(height: 160)
+                    .overlay(ProgressView())
+            @unknown default:
+                EmptyView()
             }
         }
     }
@@ -189,6 +266,50 @@ struct RecipeDetailView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .listRowBackground(Color.clear)
         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+    }
+
+    // MARK: - My Shots Section
+
+    private var myShotsSection: some View {
+        Section {
+            ForEach(recipeUserPhotos) { photo in
+                if let uiImage = UIImage(data: photo.imageData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 200)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                }
+            }
+            .onDelete { indexSet in
+                for index in indexSet {
+                    context.delete(recipeUserPhotos[index])
+                }
+            }
+
+            PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                Label("Add My Shot", systemImage: "camera.fill")
+                    .foregroundStyle(Color.accentColor)
+            }
+        } header: {
+            HStack {
+                Text("My Shots")
+                    .font(.subheadline.weight(.semibold))
+                if !recipeUserPhotos.isEmpty {
+                    Text("(\(recipeUserPhotos.count))")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+        } footer: {
+            if recipeUserPhotos.isEmpty {
+                Text("Save your own photos shot with this recipe.")
+                    .font(.caption)
+            }
+        }
     }
 
     // MARK: - Notes Section

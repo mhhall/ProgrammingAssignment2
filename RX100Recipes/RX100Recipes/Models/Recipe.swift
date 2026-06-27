@@ -164,7 +164,9 @@ struct Recipe: Identifiable, Hashable {
     var description: String
     var category: RecipeCategory
     var tags: [String]
-    var source: String
+    var source: String       // human-readable attribution label
+    var sourceURL: URL?      // tappable link to original source
+    var samplePhotoURL: URL? // optional remote sample image
     var settingType: SettingType
     var creativeStyleSettings: CreativeStyleSettings?
     var pictureProfileSettings: PictureProfileSettings?
@@ -176,6 +178,8 @@ struct Recipe: Identifiable, Hashable {
         category: RecipeCategory,
         tags: [String] = [],
         source: String = "Community",
+        sourceURL: URL? = nil,
+        samplePhotoURL: URL? = nil,
         settingType: SettingType,
         creativeStyleSettings: CreativeStyleSettings? = nil,
         pictureProfileSettings: PictureProfileSettings? = nil
@@ -186,6 +190,8 @@ struct Recipe: Identifiable, Hashable {
         self.category = category
         self.tags = tags
         self.source = source
+        self.sourceURL = sourceURL
+        self.samplePhotoURL = samplePhotoURL
         self.settingType = settingType
         self.creativeStyleSettings = creativeStyleSettings
         self.pictureProfileSettings = pictureProfileSettings
@@ -218,5 +224,20 @@ final class RecipeFavorite {
 
     init(recipeId: UUID) {
         self.recipeId = recipeId
+    }
+}
+
+@Model
+final class RecipeUserPhoto {
+    var id: UUID
+    var recipeId: UUID
+    var imageData: Data
+    var date: Date
+
+    init(recipeId: UUID, imageData: Data) {
+        self.id = UUID()
+        self.recipeId = recipeId
+        self.imageData = imageData
+        self.date = Date()
     }
 }

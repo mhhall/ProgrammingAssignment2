@@ -286,6 +286,7 @@ enum BundledRecipes {
             category: .log,
             tags: ["S-Log2", "log", "flat", "video", "grading", "dynamic range", "ETTR"],
             source: "Sony Default PP7",
+            sourceURL: URL(string: "https://helpguide.sony.net/dsc/1920/v1/en/contents/TP0001211745.html"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP7",
@@ -308,6 +309,7 @@ enum BundledRecipes {
             category: .log,
             tags: ["S-Log3", "log", "flat", "video", "LUT", "grading", "cinema"],
             source: "Sony Default PP8",
+            sourceURL: URL(string: "https://helpguide.sony.net/dsc/1920/v1/en/contents/TP0001211745.html"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP8",
@@ -485,6 +487,7 @@ enum BundledRecipes {
             category: .log,
             tags: ["HLG", "HDR", "video", "BT.2020", "hybrid log gamma", "wide gamut"],
             source: "Sony Default PP10",
+            sourceURL: URL(string: "https://helpguide.sony.net/dsc/1920/v1/en/contents/TP0001211745.html"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP10",
@@ -529,6 +532,7 @@ enum BundledRecipes {
             category: .cinematic,
             tags: ["ITU709", "video", "vlog", "natural", "broadcast", "standard", "clean"],
             source: "Sony Default PP3",
+            sourceURL: URL(string: "https://helpguide.sony.net/dsc/1920/v1/en/contents/TP0001211745.html"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP3",
@@ -639,6 +643,7 @@ enum BundledRecipes {
             category: .cinematic,
             tags: ["Movie", "video", "standard", "vivid", "general purpose"],
             source: "Sony Default PP1",
+            sourceURL: URL(string: "https://helpguide.sony.net/dsc/1920/v1/en/contents/TP0001211745.html"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP1",
