@@ -132,7 +132,7 @@ private struct SlotPickerRow: View {
             Spacer()
             if isSelected {
                 Image(systemName: "checkmark")
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(Color.accentColor)
                     .font(.footnote.weight(.semibold))
             }
         }
