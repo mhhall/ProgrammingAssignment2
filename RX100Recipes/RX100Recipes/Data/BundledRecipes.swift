@@ -173,6 +173,7 @@ enum BundledRecipes {
             tags: ["black and white", "high contrast", "shadows", "dramatic", "street", "portrait"],
             source: "ahradwani.com",
             sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            samplePhotoAssetName: "sample-bw-more-shadows",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Black & White",
@@ -409,6 +410,7 @@ enum BundledRecipes {
             tags: ["Portra", "Kodak", "film", "warm", "portrait", "natural", "skin"],
             source: "ahradwani.com",
             sourceURL: URL(string: "https://ahradwani.com/2023/12/22/sony-picture-profile-portra400-mimic/"),
+            samplePhotoAssetName: "sample-kodak-portra-400",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP6",
@@ -445,6 +447,7 @@ enum BundledRecipes {
             tags: ["CineStill", "tungsten", "cinematic", "teal", "film", "deep blacks", "street"],
             source: "ahradwani.com",
             sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            samplePhotoAssetName: "sample-cinestill-mimic",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP2",
@@ -860,6 +863,7 @@ enum BundledRecipes {
             tags: ["Fujifilm", "Pro 400H", "cool", "shadows", "lifted blacks", "portrait", "film"],
             source: "veresdenialex.com",
             sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            samplePhotoAssetName: "sample-fuji-400h",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP9",
@@ -944,6 +948,7 @@ enum BundledRecipes {
             tags: ["Kodak", "Ektar", "vivid", "landscape", "film", "slide", "saturated"],
             source: "veresdenialex.com",
             sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            samplePhotoAssetName: "sample-kodak-ektar-100",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP2",
@@ -981,6 +986,7 @@ enum BundledRecipes {
             tags: ["cinematic", "professional", "warm", "vibrant", "Cine1", "original"],
             source: "veresdenialex.com",
             sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            samplePhotoAssetName: "sample-ev-pro-plus",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP5",
@@ -1164,6 +1170,7 @@ enum BundledRecipes {
             tags: ["vibrant", "landscape", "deep blacks", "cinematic", "original", "dense color"],
             source: "veresdenialex.com",
             sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            samplePhotoAssetName: "sample-vektro-100",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP2",
@@ -1203,6 +1210,7 @@ enum BundledRecipes {
             tags: ["portrait", "indoor", "kids", "bright", "warm", "artificial light", "cheerful"],
             source: "ahradwani.com",
             sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            samplePhotoAssetName: "sample-kids-indoor",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP6",
@@ -1240,6 +1248,7 @@ enum BundledRecipes {
             tags: ["Ilford", "HP5", "black and white", "film", "shadows", "street", "portrait", "grain"],
             source: "ahradwani.com",
             sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            samplePhotoAssetName: "sample-ilford-hp5",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP2",
