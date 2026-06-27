@@ -381,7 +381,7 @@ enum BundledRecipes {
 
     ]
 
-    // MARK: - Picture Profile Recipes (31)
+    // MARK: - Picture Profile Recipes (37)
     // Picture Profile allows much finer control:
     //   Saturation -32 to +32 | Color Phase -7 to +7 | Detail -7 to +7
     //   Black Level -15 to +15 | Gamma: Movie/Still/Cine1-4/ITU709/S-Log2/S-Log3/HLG1-3
@@ -1253,6 +1253,180 @@ enum BundledRecipes {
                 detailLimit: 7,
                 detailCrispening: 0,
                 detailHighLightDetail: 0
+            )
+        ),
+
+        // --- Picture Profile companions for sonyfilmsimulations.com CL recipes ---
+        // These recipes translate the Creative Look parameters that Creative Style cannot handle:
+        //   Highlights → Knee (Manual point/slope controls highlight rolloff)
+        //   Shadows    → Black Gamma Level (lifts or crushes shadow region)
+        //   Fade       → Black Level (positive value lifts the black point, creating a faded look)
+        //
+        // CL Saturation ±9 maps to PP Saturation ×3.5 (±32 range gives much more precision).
+        // CL Base mappings: VV2→Still+Cinema, IN→Cine2+Cinema, FL→Cine1/Cine2+Still, NT/ST→Still.
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000037")!,
+            name: "Film Look FL (PP)",
+            description: "Picture Profile companion for 'Film Look (FL Street)' from sonyfilmsimulations.com. The original Creative Look recipe uses extreme Highlights −9 / Shadows +9 — a completely flat S-curve that CS cannot replicate. Here, Knee Manual 75% with Slope −4 rolls off highlights early, and Black Gamma Wide +7 lifts shadows to the maximum, reproducing that compressed film-stock tone curve. Cine2 gamma adds additional smoothness.",
+            category: .cinematic,
+            tags: ["film", "flat", "compressed", "cinematic", "tone curve", "S-curve"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP3",
+                gamma: "Cine2",
+                blackLevel: 0,
+                colorMode: "Still",
+                saturation: 11,
+                colorPhase: 0,
+                detailLevel: 2,
+                whiteBalance: "Auto",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: 7,
+                kneeMode: "Manual",
+                kneeManualPoint: "75%",
+                kneeManualSlope: -4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000038")!,
+            name: "Film Look Street Walk (PP)",
+            description: "Picture Profile companion for 'Film Look Street Walk' from sonyfilmsimulations.com. Original: FL base with Highlights −9 / Shadows +6 and Daylight WB at ISO 100. Knee Manual 75% / Slope −4 replicates the aggressive highlight rolloff; Black Gamma Wide +5 lifts the shadow region. Cine1 gives a warmer, smoother gradation than Cine2. Keep Detail Level low — the original has no sharpness boost.",
+            category: .street,
+            tags: ["film", "street", "flat", "natural", "daylight", "tone curve"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP3",
+                gamma: "Cine1",
+                blackLevel: 0,
+                colorMode: "Still",
+                saturation: 4,
+                colorPhase: 0,
+                detailLevel: -2,
+                whiteBalance: "Daylight",
+                iso: "100",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: 5,
+                kneeMode: "Manual",
+                kneeManualPoint: "75%",
+                kneeManualSlope: -4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000039")!,
+            name: "Sunset FL (PP)",
+            description: "Picture Profile companion for 'Sunset (FL)' from sonyfilmsimulations.com. Original: FL base with strong Highlights −7 / Shadows +4 and slightly negative Contrast — classic golden-hour tone shaping. Knee Manual 78% / Slope −3 rolls off warm sky highlights gently. Black Gamma Mid +4 opens up shadows. Cinema color mode deepens reds and ambers for the golden-hour mood. Slight warm Color Phase to taste.",
+            category: .landscape,
+            tags: ["sunset", "golden hour", "warm", "landscape", "film", "tone curve"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP4",
+                gamma: "Cine1",
+                blackLevel: 0,
+                colorMode: "Cinema",
+                saturation: 14,
+                colorPhase: 2,
+                detailLevel: -2,
+                whiteBalance: "Auto",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Mid",
+                blackGammaLevel: 4,
+                kneeMode: "Manual",
+                kneeManualPoint: "78%",
+                kneeManualSlope: -3
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000003A")!,
+            name: "Rainy Day (PP)",
+            description: "Picture Profile companion for 'Rainy Day' from sonyfilmsimulations.com. The original Creative Look has Fade +3 — a lifted black point giving a fogged, muted look that Creative Style cannot replicate at all. PP Black Level +6 directly lifts the black floor to match. Cine2 gamma reads slightly cooler and softer than Cine1, fitting the overcast mood. Black Gamma −2 keeps the shadows from getting too muddy.",
+            category: .street,
+            tags: ["rain", "overcast", "faded", "lifted blacks", "moody", "street", "travel"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP5",
+                gamma: "Cine2",
+                blackLevel: 6,
+                colorMode: "Still",
+                saturation: -7,
+                colorPhase: -1,
+                detailLevel: 1,
+                whiteBalance: "Auto",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Mid",
+                blackGammaLevel: -2,
+                kneeMode: "Auto",
+                kneeAutoSensitivity: "Low"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000003B")!,
+            name: "Japanese Film (PP)",
+            description: "Picture Profile companion for 'Japanese Film' from sonyfilmsimulations.com. Original FL base with Fade +1 (subtle black lift) and Highlights −4 / Shadows +2. Black Level +2 adds the gentle black-point lift of Fade +1. Knee Auto Mid handles the moderate highlight rolloff. Black Gamma Mid +2 opens up shadow detail. Cinema color mode adds warmth reminiscent of classic Japanese consumer film.",
+            category: .cinematic,
+            tags: ["film", "japanese", "vintage", "travel", "cinematic", "warm", "fade"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP4",
+                gamma: "Cine1",
+                blackLevel: 2,
+                colorMode: "Cinema",
+                saturation: 11,
+                colorPhase: 1,
+                detailLevel: 0,
+                whiteBalance: "Auto",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Mid",
+                blackGammaLevel: 2,
+                kneeMode: "Auto",
+                kneeAutoSensitivity: "Mid"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000003C")!,
+            name: "Night Look (PP)",
+            description: "Picture Profile companion for 'Night Look' from sonyfilmsimulations.com. Original NT base with Shadows −3 — crushed blacks add depth and drama under artificial city light. Black Gamma Low Range −3 targets only the deepest shadow region, keeping midtones clean while blocking up the blacks. Still gamma + Still color mode is the closest PP match to the Neutral (NT) Creative Look base. Slight underexposure recommended.",
+            category: .street,
+            tags: ["night", "city", "crushed blacks", "neutral", "street", "depth"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP3",
+                gamma: "Still",
+                blackLevel: 0,
+                colorMode: "Still",
+                saturation: 4,
+                colorPhase: 0,
+                detailLevel: -2,
+                whiteBalance: "Auto",
+                iso: "Auto",
+                exposureComp: "-0.3",
+                blackGammaRange: "Low",
+                blackGammaLevel: -3,
+                kneeMode: "Auto",
+                kneeAutoSensitivity: "Low"
             )
         ),
     ]
