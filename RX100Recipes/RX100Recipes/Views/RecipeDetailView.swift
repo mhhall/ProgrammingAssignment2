@@ -215,7 +215,7 @@ struct RecipeDetailView: View {
                 showAddNote = true
             } label: {
                 Label("Add Note", systemImage: "plus.circle.fill")
-                    .foregroundStyle(.accentColor)
+                    .foregroundStyle(Color.accentColor)
             }
         } header: {
             HStack {
