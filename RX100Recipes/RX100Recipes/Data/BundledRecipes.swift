@@ -6,7 +6,7 @@ import Foundation
 enum BundledRecipes {
     static let all: [Recipe] = creativeStyle + pictureProfile
 
-    // MARK: - Creative Style Recipes (12)
+    // MARK: - Creative Style Recipes (23)
     // Creative Style: Contrast/Saturation/Sharpness each range -3 to +3
     // Available styles: Standard, Vivid, Neutral, Clear, Deep, Light, Portrait,
     //                   Landscape, Sunset, Night Scene, Autumn Leaves, Black & White, Sepia
@@ -197,6 +197,188 @@ enum BundledRecipes {
                 iso: "Auto", exposureComp: "0"
             )
         ),
+
+        // --- Translated from sonyfilmsimulations.com Creative Look recipes ---
+        // Creative Look (VV2/IN/FL/NT/ST) is a newer Sony system not available on RX100 VII.
+        // These are approximations: Base → closest Creative Style; Sat/Contrast/Sharpness ÷ 3.
+        // Highlights, Shadows, Fade, Clarity, and Sharpness Range have no Creative Style equivalent.
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000002C")!,
+            name: "Atmospheric Portrait",
+            description: "Translated from Creative Look VV2 by Sam (sonyfilmsimulations.com). High saturation and punchy contrast for landscape and nature — works equally well for bold portrait light. Original used Highlights −2 and Clarity +8 for crisp micro-contrast; those controls aren't on the RX100 VII, so Vivid base with pushed Contrast and Saturation gets close.",
+            category: .landscape,
+            tags: ["vivid", "landscape", "nature", "punchy", "portrait"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Vivid",
+                contrast: 3, saturation: 2, sharpness: 2,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000002D")!,
+            name: "Cafe Premium Texture",
+            description: "Translated from Creative Look IN (Instant) by MoliMolly (sonyfilmsimulations.com). Warm, slightly elevated saturation and contrast for indoor scenes, portraits, still life, and street. The Instant base has a vintage-warm cast; Portrait is the closest Creative Style equivalent. Shadows pulled down in the original for deeper tones — try −0.3 EV.",
+            category: .street,
+            tags: ["indoor", "portrait", "still life", "warm", "texture", "street"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Portrait",
+                contrast: 1, saturation: 1, sharpness: 1,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000002E")!,
+            name: "Film Look (FL Street)",
+            description: "Translated from Creative Look FL by ryzx (sonyfilmsimulations.com). Film Look base with extreme Highlights −9 / Shadows +9 creates a very flat, compressed tone curve — the hallmark of scanned film. On the RX100 VII there is no Highlights/Shadows control, so Standard base at neutral Contrast approximates the flatness. Slight bump in Saturation and Sharpness to compensate.",
+            category: .cinematic,
+            tags: ["film", "flat", "compressed", "cinematic", "street", "landscape"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Standard",
+                contrast: 0, saturation: 1, sharpness: 1,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000002F")!,
+            name: "Film Look Street Walk",
+            description: "Translated from Creative Look FL by José_57 (sonyfilmsimulations.com). Subtle film look for street — very gentle saturation and contrast with no sharpness push. Original's Highlights −9 / Shadows +6 flatten the tone curve significantly; neutral Standard here replicates that character. Daylight white balance gives a slightly warm, midday-sun tone.",
+            category: .street,
+            tags: ["film", "street", "flat", "natural", "neutral", "daylight"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Standard",
+                contrast: 0, saturation: 0, sharpness: 0,
+                whiteBalance: "Daylight", iso: "100", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000030")!,
+            name: "Indoor Portrait (IN)",
+            description: "Translated from Creative Look IN (Instant) by Woniu (sonyfilmsimulations.com). Warm, flattering skin tones with elevated contrast and mild saturation — designed for indoor available-light portraits. Portrait base is the closest match to the Instant look. Original had Clarity +1 for added local contrast.",
+            category: .portrait,
+            tags: ["indoor", "portrait", "warm", "skin tones", "instant"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Portrait",
+                contrast: 2, saturation: 1, sharpness: 1,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000031")!,
+            name: "Japanese Film",
+            description: "Translated from Creative Look FL by WangFanfan (sonyfilmsimulations.com). Film-inspired look with moderate saturation and gentle contrast. Original had Fade +1 (slightly lifted blacks, not available in Creative Style) and Clarity +2 (local contrast). Standard base keeps tones clean and realistic with a mild color push.",
+            category: .cinematic,
+            tags: ["film", "japanese", "vintage", "travel", "cinematic", "warm"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Standard",
+                contrast: 1, saturation: 1, sharpness: 0,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000032")!,
+            name: "Night Look",
+            description: "Translated from Creative Look NT (Neutral) by byronxin (sonyfilmsimulations.com). Clean, desaturated night photography with mild contrast. Neutral base maps directly to NT and keeps colors from shifting under artificial light. Shadows −3 in the original crushes darks for depth; try −0.3 EV underexposure to simulate this.",
+            category: .street,
+            tags: ["night", "neutral", "desaturated", "city", "low light", "street"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Neutral",
+                contrast: 1, saturation: 0, sharpness: 0,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "–0.3"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000033")!,
+            name: "Rainy Day",
+            description: "Translated from Creative Look FL by uuu (sonyfilmsimulations.com). Muted, slightly faded aesthetic for overcast or rainy conditions. Original had Fade +3 (lifted blacks, a 'fogged' look) which is not available in Creative Style — reduce Saturation to −1 to approximate the color wash-out. Add mild Sharpness to cut through the soft tones.",
+            category: .street,
+            tags: ["rain", "overcast", "muted", "faded", "moody", "street", "travel"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Standard",
+                contrast: 0, saturation: -1, sharpness: 1,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000034")!,
+            name: "Silky Atmospheric",
+            description: "Translated from Creative Look VV2 by Sam (sonyfilmsimulations.com). Same settings as Atmospheric Portrait from the same creator — both use VV2 with Sat +5, Contrast +9, Sharpness +7, which translates identically on the RX100 VII. The original is described as high saturation and contrast for nature and landscape work.",
+            category: .landscape,
+            tags: ["vivid", "landscape", "silky", "nature", "punchy"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Vivid",
+                contrast: 3, saturation: 2, sharpness: 2,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000035")!,
+            name: "Sunset (FL)",
+            description: "Translated from Creative Look FL by uuu (sonyfilmsimulations.com). Warm golden-hour and sunset look with soft contrast and moderate saturation. FL base translates to the Sunset Creative Style, which is a near-perfect base match for this intent. Original's Highlights −7 / Shadows +4 softens the sky rolloff; Contrast −1 approximates that.",
+            category: .landscape,
+            tags: ["sunset", "golden hour", "warm", "landscape", "travel"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Sunset",
+                contrast: -1, saturation: 1, sharpness: 0,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000036")!,
+            name: "Winter Sunshine",
+            description: "Translated from Creative Look ST (Standard) by aaa (sonyfilmsimulations.com). Bright and vivid for sunny winter scenes — higher saturation with slightly reduced contrast keeps the look airy. ST base maps directly to Standard. Original had Highlights +2 / Shadows +1 (bright and open tone curve) which isn't directly adjustable in Creative Style.",
+            category: .landscape,
+            tags: ["winter", "sunny", "bright", "airy", "travel", "vivid"],
+            source: "sonyfilmsimulations.com",
+            sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Standard",
+                contrast: -1, saturation: 1, sharpness: 1,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "+0.3"
+            )
+        ),
+
     ]
 
     // MARK: - Picture Profile Recipes (31)
