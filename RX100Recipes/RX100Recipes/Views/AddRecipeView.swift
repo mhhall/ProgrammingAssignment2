@@ -74,8 +74,12 @@ struct AddRecipeView: View {
 
     // Picture Profile — Color Depth
     @State private var ppHasColorDepth = false
-    @State private var ppDepthR = 0, ppDepthG = 0, ppDepthB = 0
-    @State private var ppDepthC = 0, ppDepthM = 0, ppDepthY = 0
+    @State private var ppDepthR = 0
+    @State private var ppDepthG = 0
+    @State private var ppDepthB = 0
+    @State private var ppDepthC = 0
+    @State private var ppDepthM = 0
+    @State private var ppDepthY = 0
 
     // Picture Profile — Detail advanced
     @State private var ppHasDetailAdv = false
@@ -328,6 +332,12 @@ private struct SignedStepper: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
 
+    init(_ label: String, value: Binding<Int>, range: ClosedRange<Int>) {
+        self.label = label
+        self._value = value
+        self.range = range
+    }
+
     var body: some View {
         Stepper(value: $value, in: range) {
             HStack {
@@ -346,6 +356,12 @@ private struct UnsignedStepper: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
 
+    init(_ label: String, value: Binding<Int>, range: ClosedRange<Int>) {
+        self.label = label
+        self._value = value
+        self.range = range
+    }
+
     var body: some View {
         Stepper(value: $value, in: range) {
             HStack {
@@ -363,6 +379,12 @@ private struct LabeledTextField: View {
     let label: String
     @Binding var text: String
     let placeholder: String
+
+    init(_ label: String, text: Binding<String>, placeholder: String) {
+        self.label = label
+        self._text = text
+        self.placeholder = placeholder
+    }
 
     var body: some View {
         HStack {
