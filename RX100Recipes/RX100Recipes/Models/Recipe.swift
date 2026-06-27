@@ -208,13 +208,14 @@ struct Recipe: Identifiable, Hashable {
     var description: String
     var category: RecipeCategory
     var tags: [String]
-    var source: String       // human-readable attribution label
-    var sourceURL: URL?      // tappable link to original source
-    var samplePhotoURL: URL?          // optional remote sample image
-    var samplePhotoAssetName: String? // optional bundled asset (Assets.xcassets imageset name)
+    var source: String
+    var sourceURL: URL?
+    var samplePhotoURL: URL?
+    var samplePhotoAssetName: String?
     var settingType: SettingType
     var creativeStyleSettings: CreativeStyleSettings?
     var pictureProfileSettings: PictureProfileSettings?
+    var isUserCreated: Bool
 
     init(
         id: UUID,
@@ -228,7 +229,8 @@ struct Recipe: Identifiable, Hashable {
         samplePhotoAssetName: String? = nil,
         settingType: SettingType,
         creativeStyleSettings: CreativeStyleSettings? = nil,
-        pictureProfileSettings: PictureProfileSettings? = nil
+        pictureProfileSettings: PictureProfileSettings? = nil,
+        isUserCreated: Bool = false
     ) {
         self.id = id
         self.name = name
@@ -242,6 +244,7 @@ struct Recipe: Identifiable, Hashable {
         self.settingType = settingType
         self.creativeStyleSettings = creativeStyleSettings
         self.pictureProfileSettings = pictureProfileSettings
+        self.isUserCreated = isUserCreated
     }
 
     static func == (lhs: Recipe, rhs: Recipe) -> Bool { lhs.id == rhs.id }
@@ -286,5 +289,175 @@ final class RecipeUserPhoto {
         self.recipeId = recipeId
         self.imageData = imageData
         self.date = Date()
+    }
+}
+
+// MARK: - PP Slot Assignment
+
+@Model
+final class PPSlotAssignment {
+    var slot: Int           // 1–10
+    var recipeId: UUID
+    var recipeName: String  // denormalised for display
+
+    init(slot: Int, recipeId: UUID, recipeName: String) {
+        self.slot = slot
+        self.recipeId = recipeId
+        self.recipeName = recipeName
+    }
+}
+
+// MARK: - User-Created Recipe
+
+@Model
+final class UserRecipe {
+    var id: UUID
+    var name: String
+    var recipeDescription: String
+    var categoryRaw: String
+    var tags: [String]
+    var source: String
+    var settingTypeRaw: String
+    var createdDate: Date
+
+    // Creative Style
+    var csStyle: String
+    var csContrast: Int
+    var csSaturation: Int
+    var csSharpness: Int
+    var csWhiteBalance: String
+    var csWBShift: String?
+    var csISO: String
+    var csExposureComp: String
+
+    // Picture Profile — core
+    var ppProfileSlot: String
+    var ppGamma: String
+    var ppBlackLevel: Int
+    var ppColorMode: String
+    var ppSaturation: Int
+    var ppColorPhase: Int
+    var ppDetailLevel: Int
+    var ppWhiteBalance: String
+    var ppWBShift: String?
+    var ppISO: String
+    var ppExposureComp: String
+
+    // Picture Profile — Black Gamma
+    var ppBlackGammaRange: String?
+    var ppBlackGammaLevel: Int?
+
+    // Picture Profile — Knee
+    var ppKneeMode: String?
+    var ppKneeAutoSensitivity: String?
+    var ppKneeManualPoint: String?
+    var ppKneeManualSlope: Int?
+
+    // Picture Profile — Color Depth
+    var ppColorDepthR: Int?
+    var ppColorDepthG: Int?
+    var ppColorDepthB: Int?
+    var ppColorDepthC: Int?
+    var ppColorDepthM: Int?
+    var ppColorDepthY: Int?
+
+    // Picture Profile — Detail sub-settings
+    var ppDetailMode: String?
+    var ppDetailVHBalance: Int?
+    var ppDetailBWBalance: String?
+    var ppDetailLimit: Int?
+    var ppDetailCrispening: Int?
+    var ppDetailHighLightDetail: Int?
+
+    init(
+        name: String,
+        recipeDescription: String,
+        categoryRaw: String,
+        tags: [String] = [],
+        source: String = "Custom",
+        settingTypeRaw: String,
+        csStyle: String = "Standard",
+        csContrast: Int = 0, csSaturation: Int = 0, csSharpness: Int = 0,
+        csWhiteBalance: String = "Auto", csWBShift: String? = nil,
+        csISO: String = "Auto", csExposureComp: String = "0",
+        ppProfileSlot: String = "PP1",
+        ppGamma: String = "Still",
+        ppBlackLevel: Int = 0,
+        ppColorMode: String = "Still",
+        ppSaturation: Int = 0, ppColorPhase: Int = 0, ppDetailLevel: Int = 0,
+        ppWhiteBalance: String = "Auto", ppWBShift: String? = nil,
+        ppISO: String = "Auto", ppExposureComp: String = "0",
+        ppBlackGammaRange: String? = nil, ppBlackGammaLevel: Int? = nil,
+        ppKneeMode: String? = nil, ppKneeAutoSensitivity: String? = nil,
+        ppKneeManualPoint: String? = nil, ppKneeManualSlope: Int? = nil,
+        ppColorDepthR: Int? = nil, ppColorDepthG: Int? = nil,
+        ppColorDepthB: Int? = nil, ppColorDepthC: Int? = nil,
+        ppColorDepthM: Int? = nil, ppColorDepthY: Int? = nil,
+        ppDetailMode: String? = nil, ppDetailVHBalance: Int? = nil,
+        ppDetailBWBalance: String? = nil, ppDetailLimit: Int? = nil,
+        ppDetailCrispening: Int? = nil, ppDetailHighLightDetail: Int? = nil
+    ) {
+        self.id = UUID()
+        self.name = name
+        self.recipeDescription = recipeDescription
+        self.categoryRaw = categoryRaw
+        self.tags = tags
+        self.source = source
+        self.settingTypeRaw = settingTypeRaw
+        self.createdDate = Date()
+        self.csStyle = csStyle
+        self.csContrast = csContrast; self.csSaturation = csSaturation; self.csSharpness = csSharpness
+        self.csWhiteBalance = csWhiteBalance; self.csWBShift = csWBShift
+        self.csISO = csISO; self.csExposureComp = csExposureComp
+        self.ppProfileSlot = ppProfileSlot; self.ppGamma = ppGamma; self.ppBlackLevel = ppBlackLevel
+        self.ppColorMode = ppColorMode; self.ppSaturation = ppSaturation
+        self.ppColorPhase = ppColorPhase; self.ppDetailLevel = ppDetailLevel
+        self.ppWhiteBalance = ppWhiteBalance; self.ppWBShift = ppWBShift
+        self.ppISO = ppISO; self.ppExposureComp = ppExposureComp
+        self.ppBlackGammaRange = ppBlackGammaRange; self.ppBlackGammaLevel = ppBlackGammaLevel
+        self.ppKneeMode = ppKneeMode; self.ppKneeAutoSensitivity = ppKneeAutoSensitivity
+        self.ppKneeManualPoint = ppKneeManualPoint; self.ppKneeManualSlope = ppKneeManualSlope
+        self.ppColorDepthR = ppColorDepthR; self.ppColorDepthG = ppColorDepthG
+        self.ppColorDepthB = ppColorDepthB; self.ppColorDepthC = ppColorDepthC
+        self.ppColorDepthM = ppColorDepthM; self.ppColorDepthY = ppColorDepthY
+        self.ppDetailMode = ppDetailMode; self.ppDetailVHBalance = ppDetailVHBalance
+        self.ppDetailBWBalance = ppDetailBWBalance; self.ppDetailLimit = ppDetailLimit
+        self.ppDetailCrispening = ppDetailCrispening; self.ppDetailHighLightDetail = ppDetailHighLightDetail
+    }
+
+    var asRecipe: Recipe {
+        let st = SettingType(rawValue: settingTypeRaw) ?? .creativeStyle
+        let cat = RecipeCategory(rawValue: categoryRaw) ?? .street
+
+        let cs: CreativeStyleSettings? = st == .creativeStyle ? CreativeStyleSettings(
+            style: csStyle, contrast: csContrast, saturation: csSaturation, sharpness: csSharpness,
+            whiteBalance: csWhiteBalance, wbShift: csWBShift,
+            iso: csISO, exposureComp: csExposureComp
+        ) : nil
+
+        let pp: PictureProfileSettings? = st == .pictureProfile ? PictureProfileSettings(
+            profileSlot: ppProfileSlot, gamma: ppGamma, blackLevel: ppBlackLevel,
+            colorMode: ppColorMode, saturation: ppSaturation, colorPhase: ppColorPhase,
+            detailLevel: ppDetailLevel, whiteBalance: ppWhiteBalance, wbShift: ppWBShift,
+            iso: ppISO, exposureComp: ppExposureComp,
+            blackGammaRange: ppBlackGammaRange, blackGammaLevel: ppBlackGammaLevel,
+            kneeMode: ppKneeMode, kneeAutoSensitivity: ppKneeAutoSensitivity,
+            kneeManualPoint: ppKneeManualPoint, kneeManualSlope: ppKneeManualSlope,
+            colorDepthR: ppColorDepthR, colorDepthG: ppColorDepthG,
+            colorDepthB: ppColorDepthB, colorDepthC: ppColorDepthC,
+            colorDepthM: ppColorDepthM, colorDepthY: ppColorDepthY,
+            detailMode: ppDetailMode, detailVHBalance: ppDetailVHBalance,
+            detailBWBalance: ppDetailBWBalance, detailLimit: ppDetailLimit,
+            detailCrispening: ppDetailCrispening, detailHighLightDetail: ppDetailHighLightDetail
+        ) : nil
+
+        return Recipe(
+            id: id, name: name, description: recipeDescription,
+            category: cat, tags: tags, source: source,
+            settingType: st,
+            creativeStyleSettings: cs,
+            pictureProfileSettings: pp,
+            isUserCreated: true
+        )
     }
 }

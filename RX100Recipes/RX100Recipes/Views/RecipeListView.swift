@@ -3,7 +3,11 @@ import SwiftData
 
 struct RecipeListView: View {
     @Environment(RecipeStore.self) private var store
+    @Environment(\.modelContext) private var context
     @Query private var favorites: [RecipeFavorite]
+    @Query private var storedUserRecipes: [UserRecipe]
+    @Query(sort: \PPSlotAssignment.slot) private var slotAssignments: [PPSlotAssignment]
+    @State private var showAddRecipe = false
 
     var body: some View {
         @Bindable var store = store
@@ -20,6 +24,14 @@ struct RecipeListView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     sortMenu(store: store)
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showAddRecipe = true } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showAddRecipe) {
+                AddRecipeView()
             }
         }
     }
@@ -44,11 +56,29 @@ struct RecipeListView: View {
                             isFavorite: favorites.contains { $0.recipeId == recipe.id }
                         )
                     }
+                    .swipeActions(edge: .trailing) {
+                        if recipe.isUserCreated {
+                            Button(role: .destructive) {
+                                deleteUserRecipe(recipe)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
                 }
             }
         }
         .listStyle(.insetGrouped)
         .animation(.default, value: store.filteredRecipes.map { $0.id })
+    }
+
+    private func deleteUserRecipe(_ recipe: Recipe) {
+        if let ur = storedUserRecipes.first(where: { $0.id == recipe.id }) {
+            context.delete(ur)
+        }
+        if let sa = slotAssignments.first(where: { $0.recipeId == recipe.id }) {
+            context.delete(sa)
+        }
     }
 
     @ViewBuilder

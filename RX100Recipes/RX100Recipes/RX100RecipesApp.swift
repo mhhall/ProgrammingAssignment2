@@ -9,7 +9,10 @@ struct RX100RecipesApp: App {
         WindowGroup {
             ContentView()
                 .environment(store)
-                .modelContainer(for: [RecipeNote.self, RecipeFavorite.self, RecipeUserPhoto.self])
+                .modelContainer(for: [
+                    RecipeNote.self, RecipeFavorite.self, RecipeUserPhoto.self,
+                    PPSlotAssignment.self, UserRecipe.self
+                ])
         }
     }
 }

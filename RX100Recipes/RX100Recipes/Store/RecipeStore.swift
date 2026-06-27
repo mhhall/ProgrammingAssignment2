@@ -16,7 +16,8 @@ final class RecipeStore {
         var id: String { rawValue }
     }
 
-    var allRecipes: [Recipe] { BundledRecipes.all }
+    var userRecipes: [Recipe] = []
+    var allRecipes: [Recipe] { BundledRecipes.all + userRecipes }
 
     var filteredRecipes: [Recipe] {
         var result = allRecipes

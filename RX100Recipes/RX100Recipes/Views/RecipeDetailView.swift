@@ -10,9 +10,15 @@ struct RecipeDetailView: View {
     @Query private var allFavorites: [RecipeFavorite]
     @Query(sort: \RecipeUserPhoto.date, order: .forward) private var allUserPhotos: [RecipeUserPhoto]
 
+    @Query(sort: \PPSlotAssignment.slot) private var allSlotAssignments: [PPSlotAssignment]
+
     @State private var showAddNote = false
-    @State private var showAdvancedSettings = false
+    @State private var showFullPhoto = false
     @State private var selectedPhotoItem: PhotosPickerItem?
+
+    private var currentSlot: PPSlotAssignment? {
+        allSlotAssignments.first { $0.recipeId == recipe.id }
+    }
 
     private var recipeNotes: [RecipeNote] {
         allNotes.filter { $0.recipeId == recipe.id }
@@ -81,6 +87,9 @@ struct RecipeDetailView: View {
         }
         .sheet(isPresented: $showAddNote) {
             AddNoteView(recipeId: recipe.id, recipeName: recipe.name)
+        }
+        .fullScreenCover(isPresented: $showFullPhoto) {
+            FullScreenPhotoView(assetName: recipe.samplePhotoAssetName, url: recipe.samplePhotoURL)
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
             guard let newItem else { return }
@@ -158,6 +167,14 @@ struct RecipeDetailView: View {
                 .frame(maxHeight: 240)
                 .clipped()
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .onTapGesture { showFullPhoto = true }
+                .overlay(alignment: .bottomTrailing) {
+                    Image(systemName: "arrow.up.left.and.arrow.down.right")
+                        .font(.caption)
+                        .padding(6)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .padding(8)
+                }
         } else if let url = recipe.samplePhotoURL {
             AsyncImage(url: url) { phase in
                 switch phase {
@@ -168,6 +185,14 @@ struct RecipeDetailView: View {
                         .frame(maxHeight: 240)
                         .clipped()
                         .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .onTapGesture { showFullPhoto = true }
+                        .overlay(alignment: .bottomTrailing) {
+                            Image(systemName: "arrow.up.left.and.arrow.down.right")
+                                .font(.caption)
+                                .padding(6)
+                                .background(.ultraThinMaterial, in: Circle())
+                                .padding(8)
+                        }
                 case .failure:
                     HStack {
                         Image(systemName: "photo")
@@ -213,39 +238,13 @@ struct RecipeDetailView: View {
     @ViewBuilder
     private func pictureProfileView(_ s: PictureProfileSettings) -> some View {
         SettingRow(label: "Profile Slot", value: s.profileSlot, isHighlighted: true)
-        SettingRow(label: "Gamma", value: s.gamma)
-        SettingRow(label: "Color Mode", value: s.colorMode)
-        SettingRow(label: "Black Level", value: s.blackLevel.signedString)
-        SettingRow(label: "Saturation", value: s.saturation.signedString)
-        SettingRow(label: "Color Phase", value: s.colorPhase.signedString)
-        SettingRow(label: "Detail Level", value: s.detailLevel.signedString)
-        SettingRow(label: "White Balance", value: s.whiteBalance)
-        if let shift = s.wbShift { SettingRow(label: "WB Color Filter", value: shift) }
-        SettingRow(label: "ISO", value: s.iso)
-        SettingRow(label: "Exposure Comp", value: s.exposureComp)
-
-        if s.hasAdvancedSettings {
-            DisclosureGroup(
-                isExpanded: $showAdvancedSettings,
-                content: {
-                    advancedSettingsView(s)
-                },
-                label: {
-                    Label("Advanced Settings", systemImage: "slider.horizontal.3")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            )
+        if let slot = currentSlot {
+            SettingRow(label: "In My Camera", value: "PP\(slot.slot)")
         }
-
-        infoBox(
-            icon: "lightbulb.fill",
-            text: "Picture Profile: MENU → Camera Settings 1 → Picture Profile. Select \(s.profileSlot) and adjust each parameter. White Balance is set separately — it cannot be saved per profile."
-        )
-    }
-
-    @ViewBuilder
-    private func advancedSettingsView(_ s: PictureProfileSettings) -> some View {
+        // Camera menu order: Black Level → Gamma → Black Gamma → Knee →
+        //                    Color Mode → Saturation → Color Phase → Color Depth → Detail
+        SettingRow(label: "Black Level", value: s.blackLevel.signedString)
+        SettingRow(label: "Gamma", value: s.gamma)
         // Black Gamma
         if let range = s.blackGammaRange { SettingRow(label: "BG Range", value: range) }
         if let level = s.blackGammaLevel { SettingRow(label: "BG Level", value: level.signedString) }
@@ -255,10 +254,13 @@ struct RecipeDetailView: View {
             if km == "Auto", let sens = s.kneeAutoSensitivity {
                 SettingRow(label: "Knee Sensitivity", value: sens)
             } else if km == "Manual" {
-                if let pt = s.kneeManualPoint   { SettingRow(label: "Knee Point", value: pt) }
-                if let sl = s.kneeManualSlope   { SettingRow(label: "Knee Slope", value: sl.signedString) }
+                if let pt = s.kneeManualPoint { SettingRow(label: "Knee Point", value: pt) }
+                if let sl = s.kneeManualSlope { SettingRow(label: "Knee Slope", value: sl.signedString) }
             }
         }
+        SettingRow(label: "Color Mode", value: s.colorMode)
+        SettingRow(label: "Saturation", value: s.saturation.signedString)
+        SettingRow(label: "Color Phase", value: s.colorPhase.signedString)
         // Color Depth
         if let r = s.colorDepthR { SettingRow(label: "Color Depth R", value: r.signedString) }
         if let g = s.colorDepthG { SettingRow(label: "Color Depth G", value: g.signedString) }
@@ -266,13 +268,24 @@ struct RecipeDetailView: View {
         if let c = s.colorDepthC { SettingRow(label: "Color Depth C", value: c.signedString) }
         if let m = s.colorDepthM { SettingRow(label: "Color Depth M", value: m.signedString) }
         if let y = s.colorDepthY { SettingRow(label: "Color Depth Y", value: y.signedString) }
-        // Detail sub-settings
-        if let dm = s.detailMode         { SettingRow(label: "Detail Mode", value: dm) }
-        if let vh = s.detailVHBalance    { SettingRow(label: "Detail V/H Bal", value: vh.signedString) }
-        if let bw = s.detailBWBalance    { SettingRow(label: "Detail B/W Bal", value: bw) }
-        if let lm = s.detailLimit        { SettingRow(label: "Detail Limit", value: "\(lm)") }
-        if let cr = s.detailCrispening   { SettingRow(label: "Crispening", value: "\(cr)") }
+        // Detail
+        SettingRow(label: "Detail Level", value: s.detailLevel.signedString)
+        if let dm = s.detailMode            { SettingRow(label: "Detail Mode", value: dm) }
+        if let vh = s.detailVHBalance       { SettingRow(label: "Detail V/H Bal", value: vh.signedString) }
+        if let bw = s.detailBWBalance       { SettingRow(label: "Detail B/W Bal", value: bw) }
+        if let lm = s.detailLimit           { SettingRow(label: "Detail Limit", value: "\(lm)") }
+        if let cr = s.detailCrispening      { SettingRow(label: "Crispening", value: "\(cr)") }
         if let hl = s.detailHighLightDetail { SettingRow(label: "H-Light Detail", value: "\(hl)") }
+        // White Balance & Exposure (outside PP menu, set separately)
+        SettingRow(label: "White Balance", value: s.whiteBalance)
+        if let shift = s.wbShift { SettingRow(label: "WB Color Filter", value: shift) }
+        SettingRow(label: "ISO", value: s.iso)
+        SettingRow(label: "Exposure Comp", value: s.exposureComp)
+
+        infoBox(
+            icon: "lightbulb.fill",
+            text: "Picture Profile: MENU → Camera Settings 1 → Picture Profile. Select \(s.profileSlot) and adjust each parameter. White Balance is set separately — it cannot be saved per profile."
+        )
     }
 
     // MARK: - Info Box
