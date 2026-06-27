@@ -65,16 +65,19 @@ struct CreativeStyleSettings: Equatable {
     var saturation: Int         // -3 to +3
     var sharpness: Int          // -3 to +3
     var whiteBalance: String    // e.g. "Auto", "5200K", "Daylight"
+    var wbShift: String?        // e.g. "B1, G0" — WB Color Filter shift (A-B axis, G-M axis)
     var iso: String             // e.g. "Auto", "Auto (max 800)"
     var exposureComp: String    // e.g. "0", "+0.3", "–0.7"
 
     init(style: String, contrast: Int = 0, saturation: Int = 0, sharpness: Int = 0,
-         whiteBalance: String, iso: String = "Auto", exposureComp: String = "0") {
+         whiteBalance: String, wbShift: String? = nil,
+         iso: String = "Auto", exposureComp: String = "0") {
         self.style = style
         self.contrast = contrast
         self.saturation = saturation
         self.sharpness = sharpness
         self.whiteBalance = whiteBalance
+        self.wbShift = wbShift
         self.iso = iso
         self.exposureComp = exposureComp
     }
@@ -87,27 +90,44 @@ struct CreativeStyleSettings: Equatable {
 // Saturation:    -32 to +32   |  Color Phase: -7 to +7   |  Detail: -7 to +7
 // Black Level:   -15 to +15   |  Black Gamma: Range (Low/Mid/High), Level (-7 to +7)
 // Color Depth (per channel R/G/B/C/M/Y): -7 to +7
+// Knee: Mode (Auto/Manual); Auto: Sensitivity (Low/Mid/High); Manual: Point (%), Slope (-5 to +5)
+// Detail sub-settings: Mode (Auto/Manual), V/H Balance (-2 to +2), B/W Balance (Type1–5),
+//                      Limit (0–7), Crispening (0–7), H-Light Detail (0–4)
 
 struct PictureProfileSettings: Equatable {
-    var profileSlot: String     // PP1–PP10 (recommended slot)
+    var profileSlot: String       // PP1–PP10 (recommended slot)
     var gamma: String
-    var blackLevel: Int         // -15 to +15
+    var blackLevel: Int           // -15 to +15
     var colorMode: String
-    var saturation: Int         // -32 to +32
-    var colorPhase: Int         // -7 to +7
-    var detailLevel: Int        // -7 to +7
+    var saturation: Int           // -32 to +32
+    var colorPhase: Int           // -7 to +7
+    var detailLevel: Int          // -7 to +7
     var whiteBalance: String
+    var wbShift: String?          // e.g. "A1, G4.5" — WB Color Filter (A-B axis, G-M axis)
     var iso: String
     var exposureComp: String
-    // Advanced / optional
-    var blackGammaRange: String?  // Low, Mid, High (nil = Mid default)
+    // Black Gamma
+    var blackGammaRange: String?  // "Low", "Mid", "High" (nil = Mid default)
     var blackGammaLevel: Int?     // -7 to +7 (nil = 0 default)
+    // Knee
+    var kneeMode: String?         // "Auto" or "Manual"
+    var kneeAutoSensitivity: String? // "Low", "Mid", "High" — when mode is Auto
+    var kneeManualPoint: String?  // e.g. "75%", "92.5%" — when mode is Manual
+    var kneeManualSlope: Int?     // -5 to +5 — when mode is Manual
+    // Color Depth (per channel)
     var colorDepthR: Int?
     var colorDepthG: Int?
     var colorDepthB: Int?
     var colorDepthC: Int?
     var colorDepthM: Int?
     var colorDepthY: Int?
+    // Detail sub-settings
+    var detailMode: String?       // "Auto" or "Manual"
+    var detailVHBalance: Int?     // -2 to +2
+    var detailBWBalance: String?  // "Type1" through "Type5"
+    var detailLimit: Int?         // 0–7
+    var detailCrispening: Int?    // 0–7
+    var detailHighLightDetail: Int? // 0–4
 
     init(
         profileSlot: String,
@@ -118,16 +138,27 @@ struct PictureProfileSettings: Equatable {
         colorPhase: Int = 0,
         detailLevel: Int = 0,
         whiteBalance: String,
+        wbShift: String? = nil,
         iso: String = "Auto",
         exposureComp: String = "0",
         blackGammaRange: String? = nil,
         blackGammaLevel: Int? = nil,
+        kneeMode: String? = nil,
+        kneeAutoSensitivity: String? = nil,
+        kneeManualPoint: String? = nil,
+        kneeManualSlope: Int? = nil,
         colorDepthR: Int? = nil,
         colorDepthG: Int? = nil,
         colorDepthB: Int? = nil,
         colorDepthC: Int? = nil,
         colorDepthM: Int? = nil,
-        colorDepthY: Int? = nil
+        colorDepthY: Int? = nil,
+        detailMode: String? = nil,
+        detailVHBalance: Int? = nil,
+        detailBWBalance: String? = nil,
+        detailLimit: Int? = nil,
+        detailCrispening: Int? = nil,
+        detailHighLightDetail: Int? = nil
     ) {
         self.profileSlot = profileSlot
         self.gamma = gamma
@@ -137,22 +168,35 @@ struct PictureProfileSettings: Equatable {
         self.colorPhase = colorPhase
         self.detailLevel = detailLevel
         self.whiteBalance = whiteBalance
+        self.wbShift = wbShift
         self.iso = iso
         self.exposureComp = exposureComp
         self.blackGammaRange = blackGammaRange
         self.blackGammaLevel = blackGammaLevel
+        self.kneeMode = kneeMode
+        self.kneeAutoSensitivity = kneeAutoSensitivity
+        self.kneeManualPoint = kneeManualPoint
+        self.kneeManualSlope = kneeManualSlope
         self.colorDepthR = colorDepthR
         self.colorDepthG = colorDepthG
         self.colorDepthB = colorDepthB
         self.colorDepthC = colorDepthC
         self.colorDepthM = colorDepthM
         self.colorDepthY = colorDepthY
+        self.detailMode = detailMode
+        self.detailVHBalance = detailVHBalance
+        self.detailBWBalance = detailBWBalance
+        self.detailLimit = detailLimit
+        self.detailCrispening = detailCrispening
+        self.detailHighLightDetail = detailHighLightDetail
     }
 
     var hasAdvancedSettings: Bool {
         blackGammaRange != nil || blackGammaLevel != nil ||
+        kneeMode != nil ||
         colorDepthR != nil || colorDepthG != nil || colorDepthB != nil ||
-        colorDepthC != nil || colorDepthM != nil || colorDepthY != nil
+        colorDepthC != nil || colorDepthM != nil || colorDepthY != nil ||
+        detailMode != nil || detailVHBalance != nil
     }
 }
 

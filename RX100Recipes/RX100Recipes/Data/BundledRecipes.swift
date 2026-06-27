@@ -6,8 +6,10 @@ import Foundation
 enum BundledRecipes {
     static let all: [Recipe] = creativeStyle + pictureProfile
 
-    // MARK: - Creative Style Recipes (10)
+    // MARK: - Creative Style Recipes (12)
     // Creative Style: Contrast/Saturation/Sharpness each range -3 to +3
+    // Available styles: Standard, Vivid, Neutral, Clear, Deep, Light, Portrait,
+    //                   Landscape, Sunset, Night Scene, Autumn Leaves, Black & White, Sepia
 
     static let creativeStyle: [Recipe] = [
 
@@ -160,63 +162,128 @@ enum BundledRecipes {
                 whiteBalance: "5200K", iso: "Auto", exposureComp: "0"
             )
         ),
+
+        // --- Recipes from ahradwani.com ---
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000028")!,
+            name: "B&W More Shadows",
+            description: "High contrast black and white using the B&W Creative Style. Sharpness +5 and Contrast +3 produce deep, inky shadows with crisp edges — excellent for dramatic street and portrait shots.",
+            category: .blackAndWhite,
+            tags: ["black and white", "high contrast", "shadows", "dramatic", "street", "portrait"],
+            source: "ahradwani.com",
+            sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Black & White",
+                contrast: 3, saturation: 0, sharpness: 3,
+                whiteBalance: "Auto", iso: "Auto", exposureComp: "0"
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000029")!,
+            name: "Classic Chrome Mimic",
+            description: "Mimics Fujifilm's Classic Chrome look using the Neutral Creative Style — muted, slightly desaturated tones with moderate contrast. The 5600K WB with a slight blue shift cools the image for a vintage editorial feel.",
+            category: .street,
+            tags: ["Classic Chrome", "Fujifilm", "muted", "desaturated", "street", "vintage", "editorial"],
+            source: "ahradwani.com",
+            sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            settingType: .creativeStyle,
+            creativeStyleSettings: CreativeStyleSettings(
+                style: "Neutral",
+                contrast: 2, saturation: -2, sharpness: 3,
+                whiteBalance: "5600K", wbShift: "B1, G0",
+                iso: "Auto", exposureComp: "0"
+            )
+        ),
     ]
 
-    // MARK: - Picture Profile Recipes (21)
+    // MARK: - Picture Profile Recipes (31)
     // Picture Profile allows much finer control:
     //   Saturation -32 to +32 | Color Phase -7 to +7 | Detail -7 to +7
     //   Black Level -15 to +15 | Gamma: Movie/Still/Cine1-4/ITU709/S-Log2/S-Log3/HLG1-3
 
     static let pictureProfile: [Recipe] = [
 
+        // --- Film Stock Mimics (real recipes from ahradwani.com) ---
+
         Recipe(
             id: UUID(uuidString: "00000000-0000-4000-8000-00000000000B")!,
             name: "Kodak Portra 400",
-            description: "Mimics the warm, natural tones of Kodak Portra 400 — the go-to film for portrait and wedding photographers. Slightly elevated saturation and warmth, with softened sharpness for organic detail rendering.",
+            description: "The author's main Portra 400 mimic developed specifically for the RX100 VII. Cine2 gamma with lifted blacks (+10) and maximum saturation (+32) for warm, rich skin tones. Very soft detail (-7) for organic rendering. Slight amber WB with green shift emulates Portra's characteristic warmth.",
             category: .portrait,
-            tags: ["Portra", "Kodak", "film", "warm", "portrait", "natural"],
-            source: "Community / veresdenialex.com",
+            tags: ["Portra", "Kodak", "film", "warm", "portrait", "natural", "skin"],
+            source: "ahradwani.com",
+            sourceURL: URL(string: "https://ahradwani.com/2023/12/22/sony-picture-profile-portra400-mimic/"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
-                profileSlot: "PP2",
-                gamma: "Still",
-                blackLevel: 2,
+                profileSlot: "PP6",
+                gamma: "Cine2",
+                blackLevel: 10,
                 colorMode: "Still",
-                saturation: 8,
-                colorPhase: 1,
-                detailLevel: -3,
-                whiteBalance: "5200K",
-                iso: "Auto (max 800)",
-                exposureComp: "+0.3"
+                saturation: 32,
+                colorPhase: 5,
+                detailLevel: -7,
+                whiteBalance: "5300K",
+                wbShift: "A1, G4.5",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Mid",
+                blackGammaLevel: 2,
+                kneeMode: "Auto",
+                kneeAutoSensitivity: "Mid",
+                colorDepthR: -2, colorDepthG: 6, colorDepthB: 6,
+                colorDepthC: 2, colorDepthM: 5, colorDepthY: -3,
+                detailMode: "Manual",
+                detailVHBalance: 0,
+                detailBWBalance: "Type5",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 0
             )
         ),
 
         Recipe(
             id: UUID(uuidString: "00000000-0000-4000-8000-00000000000C")!,
-            name: "Cinestill 800T",
-            description: "Recreates the iconic Cinestill 800T tungsten-daylight film. Set WB to Incandescent/3200K so outdoor daylight shifts to teal — that's the signature Cinestill split. Best shot at night or under mixed artificial lighting.",
+            name: "CineStill Mimic",
+            description: "Emulates the CineStill tungsten film daylight look. Still gamma with very deep crushed blacks (-15) and S-Gamut color science. Very cool WB (3500K + B4 shift) pushes shadows toward teal. Strong blue/green Color Depth boost enhances the characteristic halation-adjacent quality. Marked 'under adjustment' by the author — experiment with exposure.",
             category: .cinematic,
-            tags: ["Cinestill", "800T", "tungsten", "night", "cinematic", "teal", "film"],
-            source: "Community",
+            tags: ["CineStill", "tungsten", "cinematic", "teal", "film", "deep blacks", "street"],
+            source: "ahradwani.com",
+            sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
-                profileSlot: "PP1",
-                gamma: "Movie",
-                blackLevel: 0,
-                colorMode: "Cinema",
+                profileSlot: "PP2",
+                gamma: "Still",
+                blackLevel: -15,
+                colorMode: "S-Gamut",
                 saturation: 10,
-                colorPhase: 2,
-                detailLevel: -2,
-                whiteBalance: "3200K (Incandescent / Tungsten)",
-                iso: "800–1600",
-                exposureComp: "0"
+                colorPhase: -3,
+                detailLevel: 2,
+                whiteBalance: "3500K",
+                wbShift: "B4, M1",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: -7,
+                kneeMode: "Auto",
+                kneeAutoSensitivity: "Mid",
+                colorDepthR: 0, colorDepthG: 7, colorDepthB: 7,
+                colorDepthC: 0, colorDepthM: -7, colorDepthY: 7,
+                detailMode: "Auto",
+                detailVHBalance: 0,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 0,
+                detailHighLightDetail: 2
             )
         ),
 
         Recipe(
             id: UUID(uuidString: "00000000-0000-4000-8000-00000000000D")!,
             name: "Kodachrome 64",
-            description: "The legendary warm, vibrant look of Kodachrome 64. Rich yellows and reds, deep blacks, and crisp detail. Shoot in bright light — this slide stock loved direct sun. Lower detail levels than PP default for film-like micro-contrast.",
+            description: "Approximates the legendary warm, vibrant look of Kodachrome 64. Rich yellows and reds, deep blacks, and crisp detail. Shoot in bright light — this slide stock loved direct sun.",
             category: .vintage,
             tags: ["Kodachrome", "Kodak", "vintage", "vivid", "warm", "classic", "slide film"],
             source: "Community",
@@ -230,7 +297,7 @@ enum BundledRecipes {
                 colorPhase: -1,
                 detailLevel: 2,
                 whiteBalance: "5500K",
-                iso: "64–100 (lowest ISO available)",
+                iso: "Auto (lowest available)",
                 exposureComp: "–0.3"
             )
         ),
@@ -260,7 +327,7 @@ enum BundledRecipes {
         Recipe(
             id: UUID(uuidString: "00000000-0000-4000-8000-00000000000F")!,
             name: "Cinematic Flat",
-            description: "A muted, flat profile for in-camera footage that doesn't need extensive grading. Cine1 gamma softens contrast in shadows and emphasizes highlight gradation. Detail -7 for smooth, organic rendering. Good middle ground between log and standard.",
+            description: "A muted, flat profile for in-camera footage that doesn't need extensive grading. Cine1 gamma softens contrast in shadows and emphasizes highlight gradation. Detail -7 for smooth, organic rendering.",
             category: .cinematic,
             tags: ["cinematic", "flat", "video", "muted", "Cine1", "no-grade"],
             source: "Community",
@@ -417,7 +484,7 @@ enum BundledRecipes {
         Recipe(
             id: UUID(uuidString: "00000000-0000-4000-8000-000000000016")!,
             name: "High Contrast B&W",
-            description: "Punchy black and white with elevated detail and deep crushed blacks. Black Level -3 adds impact and ink-like shadows. Detail +2 sharpens micro-contrast for editorial clarity. Excellent for street and architecture.",
+            description: "Punchy black and white with elevated detail and deep crushed blacks. Black Level -3 adds impact and ink-like shadows. Detail +2 sharpens micro-contrast for editorial clarity.",
             category: .blackAndWhite,
             tags: ["black and white", "high contrast", "street", "architecture", "punchy", "shadows"],
             source: "Community",
@@ -453,7 +520,7 @@ enum BundledRecipes {
                 colorPhase: 0,
                 detailLevel: 2,
                 whiteBalance: "5500K",
-                iso: "Lowest available (64–200)",
+                iso: "Auto (lowest available)",
                 exposureComp: "–0.3"
             )
         ),
@@ -594,23 +661,38 @@ enum BundledRecipes {
 
         Recipe(
             id: UUID(uuidString: "00000000-0000-4000-8000-00000000001E")!,
-            name: "Fuji Pro 400H",
-            description: "Inspired by Fujifilm Pro 400H — famous for overexposed pastel tones and exceptional skin rendering. The +0.7 overexposure is intentional. Lifted shadows, soft detail, slight warmth. Use in soft, diffused light for best results.",
+            name: "Fuji 400H",
+            description: "Real recipe from veresdenialex.com emulating Fujifilm Pro 400H — famous for cool shadows, lifted wide blacks, and warm highlights. Movie gamma with very wide shadow rolloff. Color Depth heavily skews green (+7) for Fuji's characteristic hue. Very cool WB (3500K) with amber-magenta correction.",
             category: .portrait,
-            tags: ["Fujifilm", "Pro 400H", "pastel", "soft", "overexposed", "portrait", "film"],
-            source: "Community",
+            tags: ["Fujifilm", "Pro 400H", "cool", "shadows", "lifted blacks", "portrait", "film"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
-                profileSlot: "PP2",
-                gamma: "Still",
-                blackLevel: 4,
+                profileSlot: "PP9",
+                gamma: "Movie",
+                blackLevel: 0,
                 colorMode: "Still",
-                saturation: 4,
-                colorPhase: 1,
-                detailLevel: -3,
-                whiteBalance: "5800K",
-                iso: "Auto (max 400)",
-                exposureComp: "+0.7 (overexpose intentionally)"
+                saturation: 11,
+                colorPhase: -3,
+                detailLevel: 0,
+                whiteBalance: "3500K",
+                wbShift: "A7, M0.25",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: 7,
+                kneeMode: "Manual",
+                kneeManualPoint: "80%",
+                kneeManualSlope: 4,
+                colorDepthR: -4, colorDepthG: 7, colorDepthB: -3,
+                colorDepthC: -3, colorDepthM: -5, colorDepthY: -3,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
             )
         ),
 
@@ -656,6 +738,339 @@ enum BundledRecipes {
                 whiteBalance: "Auto",
                 iso: "Auto",
                 exposureComp: "0"
+            )
+        ),
+
+        // --- Real recipes from veresdenialex.com ---
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000021")!,
+            name: "Kodak Ektar 100",
+            description: "Emulates Kodak Ektar 100 — vibrant, high-saturation slide-like film with deep shadows and rich color. Wide black gamma rolloff (-7) creates a dramatic base. S-Gamut3.Cine color science is specified; on RX100 VII substitute Cinema color mode if S-Gamut3.Cine is unavailable with Still gamma.",
+            category: .landscape,
+            tags: ["Kodak", "Ektar", "vivid", "landscape", "film", "slide", "saturated"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP2",
+                gamma: "Still",
+                blackLevel: 6,
+                colorMode: "S-Gamut3.Cine",
+                saturation: 25,
+                colorPhase: 2,
+                detailLevel: 0,
+                whiteBalance: "5000K",
+                wbShift: "A2, M1",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: -7,
+                kneeMode: "Manual",
+                kneeManualPoint: "75%",
+                kneeManualSlope: 4,
+                colorDepthR: -3, colorDepthG: 7, colorDepthB: 5,
+                colorDepthC: 5, colorDepthM: 5, colorDepthY: 1,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000022")!,
+            name: "The Ev Pro+",
+            description: "Original professional cinematic recipe by veresdenialex. Cine1 gamma with lifted midtone blacks and warm, vibrant S-Gamut rendering. Color Phase +5 pushes warmth strongly. Deep negative blacks (-10) create bold shadow contrast.",
+            category: .cinematic,
+            tags: ["cinematic", "professional", "warm", "vibrant", "Cine1", "original"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP5",
+                gamma: "Cine1",
+                blackLevel: -10,
+                colorMode: "S-Gamut",
+                saturation: 25,
+                colorPhase: 5,
+                detailLevel: 0,
+                whiteBalance: "4300K",
+                wbShift: "A3.5",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Mid",
+                blackGammaLevel: 7,
+                kneeMode: "Auto",
+                colorDepthR: -3, colorDepthG: 4, colorDepthB: 3,
+                colorDepthC: 3, colorDepthM: -2, colorDepthY: 2,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000023")!,
+            name: "Kodak Portra 800",
+            description: "Emulates Kodak Portra 800 using S-Log2/S-Log3 for a wide dynamic range base. Very deep blacks (-15) with compressed midtone shadows. Warm magenta-heavy Color Depth. IMPORTANT: Turn Off Gamma Assist. On RX100 VII, S-Log2 locks Color Mode to S-Gamut — use that as the closest substitute for 'Still'.",
+            category: .portrait,
+            tags: ["Kodak", "Portra", "800", "portrait", "warm", "film", "S-Log", "log"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP9",
+                gamma: "S-Log2",
+                blackLevel: -15,
+                colorMode: "S-Gamut",
+                saturation: 20,
+                colorPhase: 3,
+                detailLevel: 0,
+                whiteBalance: "4500K",
+                wbShift: "A7, M1",
+                iso: "800+",
+                exposureComp: "+1 to +2 (ETTR)",
+                blackGammaRange: "Mid",
+                blackGammaLevel: -7,
+                kneeMode: "Manual",
+                kneeManualPoint: "75%",
+                kneeManualSlope: 5,
+                colorDepthR: 3, colorDepthG: 5, colorDepthB: 5,
+                colorDepthC: 7, colorDepthM: 7, colorDepthY: -3,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000024")!,
+            name: "Kodak Gold 200",
+            description: "Emulates Kodak Gold 200 — very warm, high-saturation outdoor film. Maximum saturation (+32) with S-Gamut color science and Color Phase +6 for rich amber rendering. Very high Kelvin (8000K) corrected with blue shift. Best in sunny outdoor light.",
+            category: .travel,
+            tags: ["Kodak", "Gold", "warm", "saturated", "outdoor", "travel", "sunny", "film"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP9",
+                gamma: "Movie",
+                blackLevel: -5,
+                colorMode: "S-Gamut",
+                saturation: 32,
+                colorPhase: 6,
+                detailLevel: 0,
+                whiteBalance: "8000K",
+                wbShift: "B3, M1.75",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: 7,
+                kneeMode: "Manual",
+                kneeManualPoint: "75%",
+                kneeManualSlope: 4,
+                colorDepthR: -4, colorDepthG: 0, colorDepthB: 5,
+                colorDepthC: 5, colorDepthM: 5, colorDepthY: 4,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000025")!,
+            name: "Cinestill 50D",
+            description: "Emulates Cinestill 50D — the daylight-balanced cinema stock. Still gamma with lifted midtone shadows (+7 BG level), moderate saturation and slight cool Color Phase. Very high Kelvin (7400K) with blue-magenta correction shifts the look cool. Warm red/green Color Depth push adds the stock's characteristic richness.",
+            category: .cinematic,
+            tags: ["Cinestill", "50D", "daylight", "street", "cinematic", "film", "cool"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP2",
+                gamma: "Still",
+                blackLevel: 0,
+                colorMode: "Still",
+                saturation: 10,
+                colorPhase: -3,
+                detailLevel: 0,
+                whiteBalance: "7400K",
+                wbShift: "B4, M1.5",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Mid",
+                blackGammaLevel: 7,
+                kneeMode: "Manual",
+                kneeManualPoint: "75%",
+                kneeManualSlope: 4,
+                colorDepthR: 4, colorDepthG: 5, colorDepthB: -2,
+                colorDepthC: 3, colorDepthM: 5, colorDepthY: 2,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000026")!,
+            name: "Senova Light",
+            description: "Original cinematic recipe by veresdenialex. Cine3 gamma with maximum deep blacks (-15) and strong Color Phase warmth (+7). S-Gamut3 color science with high saturation. Very warm WB (8000K) and high Knee point (85%) compress highlights gently. Atmospheric, painterly quality.",
+            category: .cinematic,
+            tags: ["cinematic", "Cine3", "portrait", "atmospheric", "warm", "original", "deep blacks"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP9",
+                gamma: "Cine3",
+                blackLevel: -15,
+                colorMode: "S-Gamut3",
+                saturation: 20,
+                colorPhase: 7,
+                detailLevel: 0,
+                whiteBalance: "8000K",
+                wbShift: "B2, M2",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: 7,
+                kneeMode: "Manual",
+                kneeManualPoint: "85%",
+                kneeManualSlope: 4,
+                colorDepthR: -5, colorDepthG: -1, colorDepthB: 3,
+                colorDepthC: 4, colorDepthM: 5, colorDepthY: 2,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-000000000027")!,
+            name: "Vektro 100",
+            description: "Original vibrant landscape recipe by veresdenialex. Still gamma with very deep blacks (-15, Wide -7) and a high Knee point (92.5%) to preserve highlight detail. High uniform Color Depth across R/G/B (+5–7) produces rich, dense color in every channel. Cool WB (4000K) with amber correction for a slightly mysterious quality.",
+            category: .landscape,
+            tags: ["vibrant", "landscape", "deep blacks", "cinematic", "original", "dense color"],
+            source: "veresdenialex.com",
+            sourceURL: URL(string: "https://www.veresdenialex.com/8-free-sony-film-simulations"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP2",
+                gamma: "Still",
+                blackLevel: -15,
+                colorMode: "S-Gamut3",
+                saturation: 27,
+                colorPhase: 6,
+                detailLevel: 0,
+                whiteBalance: "4000K",
+                wbShift: "A5, M0.5",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: -7,
+                kneeMode: "Manual",
+                kneeManualPoint: "92.5%",
+                kneeManualSlope: 5,
+                colorDepthR: 5, colorDepthG: 7, colorDepthB: 5,
+                colorDepthC: 5, colorDepthM: 2, colorDepthY: 0,
+                detailMode: "Manual",
+                detailVHBalance: 2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 7,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        // --- More real recipes from ahradwani.com ---
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000002A")!,
+            name: "Kids Indoor",
+            description: "Optimized for photographing children under artificial indoor lighting. Cine2 gamma with maximum lifted blacks (+15) and high saturation (+15) keeps everything bright and cheerful. High Detail (+7) for sharp rendition of fast-moving subjects. Note: marked 'under adjustment' by the author — try it and tweak to taste.",
+            category: .portrait,
+            tags: ["portrait", "indoor", "kids", "bright", "warm", "artificial light", "cheerful"],
+            source: "ahradwani.com",
+            sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP6",
+                gamma: "Cine2",
+                blackLevel: 15,
+                colorMode: "Cinema",
+                saturation: 15,
+                colorPhase: 5,
+                detailLevel: 7,
+                whiteBalance: "Fluorescent+2",
+                wbShift: "B4, M2",
+                iso: "Auto",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: 7,
+                kneeMode: "Manual",
+                kneeManualPoint: "100%",
+                kneeManualSlope: 2,
+                colorDepthR: 2, colorDepthG: 2, colorDepthB: 2,
+                colorDepthC: 1, colorDepthM: 4, colorDepthY: 3,
+                detailMode: "Auto",
+                detailVHBalance: 1,
+                detailBWBalance: "Type5",
+                detailLimit: 5,
+                detailCrispening: 0,
+                detailHighLightDetail: 4
+            )
+        ),
+
+        Recipe(
+            id: UUID(uuidString: "00000000-0000-4000-8000-00000000002B")!,
+            name: "Ilford HP5 B&W",
+            description: "The author's main B&W film simulation for the RX100 VII, mimicking Ilford HP5. Very deep crushed blacks (-15, Wide -7) with Still gamma and Black & White color mode. Minimum Detail (-7) for an organic, smooth grain-friendly rendering. High ISO is encouraged — natural sensor grain completes the HP5 aesthetic.",
+            category: .blackAndWhite,
+            tags: ["Ilford", "HP5", "black and white", "film", "shadows", "street", "portrait", "grain"],
+            source: "ahradwani.com",
+            sourceURL: URL(string: "https://ahradwani.com/sony-picture-profiles/"),
+            settingType: .pictureProfile,
+            pictureProfileSettings: PictureProfileSettings(
+                profileSlot: "PP2",
+                gamma: "Still",
+                blackLevel: -15,
+                colorMode: "Black & White",
+                saturation: -17,
+                colorPhase: -2,
+                detailLevel: -7,
+                whiteBalance: "Auto",
+                iso: "800–3200 (embrace the grain)",
+                exposureComp: "0",
+                blackGammaRange: "Wide",
+                blackGammaLevel: -7,
+                kneeMode: "Auto",
+                kneeAutoSensitivity: "Mid",
+                colorDepthR: 0, colorDepthG: 0, colorDepthB: 0,
+                colorDepthC: 0, colorDepthM: 0, colorDepthY: 0,
+                detailMode: "Auto",
+                detailVHBalance: -2,
+                detailBWBalance: "Type3",
+                detailLimit: 7,
+                detailCrispening: 0,
+                detailHighLightDetail: 0
             )
         ),
     ]

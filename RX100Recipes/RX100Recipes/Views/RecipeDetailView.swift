@@ -189,6 +189,7 @@ struct RecipeDetailView: View {
         SettingRow(label: "Saturation", value: s.saturation.signedString)
         SettingRow(label: "Sharpness", value: s.sharpness.signedString)
         SettingRow(label: "White Balance", value: s.whiteBalance)
+        if let shift = s.wbShift { SettingRow(label: "WB Color Filter", value: shift) }
         SettingRow(label: "ISO", value: s.iso)
         SettingRow(label: "Exposure Comp", value: s.exposureComp)
 
@@ -210,6 +211,7 @@ struct RecipeDetailView: View {
         SettingRow(label: "Color Phase", value: s.colorPhase.signedString)
         SettingRow(label: "Detail Level", value: s.detailLevel.signedString)
         SettingRow(label: "White Balance", value: s.whiteBalance)
+        if let shift = s.wbShift { SettingRow(label: "WB Color Filter", value: shift) }
         SettingRow(label: "ISO", value: s.iso)
         SettingRow(label: "Exposure Comp", value: s.exposureComp)
 
@@ -235,18 +237,33 @@ struct RecipeDetailView: View {
 
     @ViewBuilder
     private func advancedSettingsView(_ s: PictureProfileSettings) -> some View {
-        if let range = s.blackGammaRange {
-            SettingRow(label: "BG Range", value: range)
+        // Black Gamma
+        if let range = s.blackGammaRange { SettingRow(label: "BG Range", value: range) }
+        if let level = s.blackGammaLevel { SettingRow(label: "BG Level", value: level.signedString) }
+        // Knee
+        if let km = s.kneeMode {
+            SettingRow(label: "Knee Mode", value: km)
+            if km == "Auto", let sens = s.kneeAutoSensitivity {
+                SettingRow(label: "Knee Sensitivity", value: sens)
+            } else if km == "Manual" {
+                if let pt = s.kneeManualPoint   { SettingRow(label: "Knee Point", value: pt) }
+                if let sl = s.kneeManualSlope   { SettingRow(label: "Knee Slope", value: sl.signedString) }
+            }
         }
-        if let level = s.blackGammaLevel {
-            SettingRow(label: "BG Level", value: level.signedString)
-        }
+        // Color Depth
         if let r = s.colorDepthR { SettingRow(label: "Color Depth R", value: r.signedString) }
         if let g = s.colorDepthG { SettingRow(label: "Color Depth G", value: g.signedString) }
         if let b = s.colorDepthB { SettingRow(label: "Color Depth B", value: b.signedString) }
         if let c = s.colorDepthC { SettingRow(label: "Color Depth C", value: c.signedString) }
         if let m = s.colorDepthM { SettingRow(label: "Color Depth M", value: m.signedString) }
         if let y = s.colorDepthY { SettingRow(label: "Color Depth Y", value: y.signedString) }
+        // Detail sub-settings
+        if let dm = s.detailMode         { SettingRow(label: "Detail Mode", value: dm) }
+        if let vh = s.detailVHBalance    { SettingRow(label: "Detail V/H Bal", value: vh.signedString) }
+        if let bw = s.detailBWBalance    { SettingRow(label: "Detail B/W Bal", value: bw) }
+        if let lm = s.detailLimit        { SettingRow(label: "Detail Limit", value: "\(lm)") }
+        if let cr = s.detailCrispening   { SettingRow(label: "Crispening", value: "\(cr)") }
+        if let hl = s.detailHighLightDetail { SettingRow(label: "H-Light Detail", value: "\(hl)") }
     }
 
     // MARK: - Info Box
