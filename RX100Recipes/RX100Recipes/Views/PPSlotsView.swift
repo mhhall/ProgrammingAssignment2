@@ -113,6 +113,34 @@ private struct SlotRow: View {
 
 private struct SlotID: Identifiable { let id: Int }
 
+private struct SlotPickerRow: View {
+    let recipe: Recipe
+    let isSelected: Bool
+    let onSelect: (Recipe?) -> Void
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(recipe.name)
+                    .font(.subheadline.weight(.medium))
+                if let pp = recipe.pictureProfileSettings {
+                    Text("\(pp.gamma) · \(pp.colorMode)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+            if isSelected {
+                Image(systemName: "checkmark")
+                    .foregroundStyle(.accentColor)
+                    .font(.footnote.weight(.semibold))
+            }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture { onSelect(recipe) }
+    }
+}
+
 private struct SlotPickerView: View {
     let slot: Int
     let currentRecipeId: UUID?
@@ -133,25 +161,11 @@ private struct SlotPickerView: View {
 
                 Section("Picture Profile Recipes") {
                     ForEach(ppRecipes.sorted { $0.name < $1.name }) { recipe in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 3) {
-                                Text(recipe.name)
-                                    .font(.subheadline.weight(.medium))
-                                if let pp = recipe.pictureProfileSettings {
-                                    Text("\(pp.gamma) · \(pp.colorMode)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            Spacer()
-                            if recipe.id == currentRecipeId {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(.accentColor)
-                                    .font(.footnote.weight(.semibold))
-                            }
-                        }
-                        .contentShape(Rectangle())
-                        .onTapGesture { onSelect(recipe) }
+                        SlotPickerRow(
+                            recipe: recipe,
+                            isSelected: recipe.id == currentRecipeId,
+                            onSelect: onSelect
+                        )
                     }
                 }
             }
