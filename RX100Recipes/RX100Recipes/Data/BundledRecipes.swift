@@ -211,6 +211,7 @@ enum BundledRecipes {
             tags: ["vivid", "landscape", "nature", "punchy", "portrait"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-atmospheric-portrait",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Vivid",
@@ -227,6 +228,7 @@ enum BundledRecipes {
             tags: ["indoor", "portrait", "still life", "warm", "texture", "street"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-cafe-premium-texture",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Portrait",
@@ -243,6 +245,7 @@ enum BundledRecipes {
             tags: ["film", "flat", "compressed", "cinematic", "street", "landscape"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-film-look-fl",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Standard",
@@ -259,6 +262,7 @@ enum BundledRecipes {
             tags: ["film", "street", "flat", "natural", "neutral", "daylight"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-film-look-street-walk",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Standard",
@@ -275,6 +279,7 @@ enum BundledRecipes {
             tags: ["indoor", "portrait", "warm", "skin tones", "instant"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-indoor-portrait",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Portrait",
@@ -291,6 +296,7 @@ enum BundledRecipes {
             tags: ["film", "japanese", "vintage", "travel", "cinematic", "warm"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-japanese-film",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Standard",
@@ -307,6 +313,7 @@ enum BundledRecipes {
             tags: ["night", "neutral", "desaturated", "city", "low light", "street"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-night-look",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Neutral",
@@ -323,6 +330,7 @@ enum BundledRecipes {
             tags: ["rain", "overcast", "muted", "faded", "moody", "street", "travel"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-rainy-day",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Standard",
@@ -339,6 +347,7 @@ enum BundledRecipes {
             tags: ["vivid", "landscape", "silky", "nature", "punchy"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-silky-atmospheric",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Vivid",
@@ -355,6 +364,7 @@ enum BundledRecipes {
             tags: ["sunset", "golden hour", "warm", "landscape", "travel"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-sunset-fl",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Sunset",
@@ -371,6 +381,7 @@ enum BundledRecipes {
             tags: ["winter", "sunny", "bright", "airy", "travel", "vivid"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-winter-sunshine",
             settingType: .creativeStyle,
             creativeStyleSettings: CreativeStyleSettings(
                 style: "Standard",
@@ -1273,6 +1284,7 @@ enum BundledRecipes {
             tags: ["film", "flat", "compressed", "cinematic", "tone curve", "S-curve"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-film-look-fl",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP3",
@@ -1301,6 +1313,7 @@ enum BundledRecipes {
             tags: ["film", "street", "flat", "natural", "daylight", "tone curve"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-film-look-street-walk",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP3",
@@ -1329,6 +1342,7 @@ enum BundledRecipes {
             tags: ["sunset", "golden hour", "warm", "landscape", "film", "tone curve"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-sunset-fl",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP4",
@@ -1357,6 +1371,7 @@ enum BundledRecipes {
             tags: ["rain", "overcast", "faded", "lifted blacks", "moody", "street", "travel"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-rainy-day",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP5",
@@ -1384,6 +1399,7 @@ enum BundledRecipes {
             tags: ["film", "japanese", "vintage", "travel", "cinematic", "warm", "fade"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-japanese-film",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP4",
@@ -1411,6 +1427,7 @@ enum BundledRecipes {
             tags: ["night", "city", "crushed blacks", "neutral", "street", "depth"],
             source: "sonyfilmsimulations.com",
             sourceURL: URL(string: "https://sonyfilmsimulations.com"),
+            samplePhotoAssetName: "sample-night-look",
             settingType: .pictureProfile,
             pictureProfileSettings: PictureProfileSettings(
                 profileSlot: "PP3",

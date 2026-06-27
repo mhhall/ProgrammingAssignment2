@@ -36,9 +36,9 @@ struct RecipeDetailView: View {
             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
 
             // Sample Photo Section
-            if let url = recipe.samplePhotoURL {
+            if recipe.samplePhotoAssetName != nil || recipe.samplePhotoURL != nil {
                 Section {
-                    samplePhotoView(url: url)
+                    samplePhotoSection
                 } header: {
                     Text("Sample Photo")
                         .font(.subheadline.weight(.semibold))
@@ -150,32 +150,41 @@ struct RecipeDetailView: View {
     // MARK: - Sample Photo
 
     @ViewBuilder
-    private func samplePhotoView(url: URL) -> some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(maxHeight: 240)
-                    .clipped()
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            case .failure:
-                HStack {
-                    Image(systemName: "photo")
-                        .foregroundStyle(.secondary)
-                    Text("Unable to load photo")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+    private var samplePhotoSection: some View {
+        if let assetName = recipe.samplePhotoAssetName {
+            Image(assetName)
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(maxHeight: 240)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+        } else if let url = recipe.samplePhotoURL {
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case .success(let image):
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(maxHeight: 240)
+                        .clipped()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                case .failure:
+                    HStack {
+                        Image(systemName: "photo")
+                            .foregroundStyle(.secondary)
+                        Text("Unable to load photo")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, minHeight: 60)
+                case .empty:
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(.secondarySystemFill))
+                        .frame(height: 160)
+                        .overlay(ProgressView())
+                @unknown default:
+                    EmptyView()
                 }
-                .frame(maxWidth: .infinity, minHeight: 60)
-            case .empty:
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color(.secondarySystemFill))
-                    .frame(height: 160)
-                    .overlay(ProgressView())
-            @unknown default:
-                EmptyView()
             }
         }
     }

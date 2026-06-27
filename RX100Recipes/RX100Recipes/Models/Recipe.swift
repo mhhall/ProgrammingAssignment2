@@ -210,7 +210,8 @@ struct Recipe: Identifiable, Hashable {
     var tags: [String]
     var source: String       // human-readable attribution label
     var sourceURL: URL?      // tappable link to original source
-    var samplePhotoURL: URL? // optional remote sample image
+    var samplePhotoURL: URL?          // optional remote sample image
+    var samplePhotoAssetName: String? // optional bundled asset (Assets.xcassets imageset name)
     var settingType: SettingType
     var creativeStyleSettings: CreativeStyleSettings?
     var pictureProfileSettings: PictureProfileSettings?
@@ -224,6 +225,7 @@ struct Recipe: Identifiable, Hashable {
         source: String = "Community",
         sourceURL: URL? = nil,
         samplePhotoURL: URL? = nil,
+        samplePhotoAssetName: String? = nil,
         settingType: SettingType,
         creativeStyleSettings: CreativeStyleSettings? = nil,
         pictureProfileSettings: PictureProfileSettings? = nil
@@ -236,6 +238,7 @@ struct Recipe: Identifiable, Hashable {
         self.source = source
         self.sourceURL = sourceURL
         self.samplePhotoURL = samplePhotoURL
+        self.samplePhotoAssetName = samplePhotoAssetName
         self.settingType = settingType
         self.creativeStyleSettings = creativeStyleSettings
         self.pictureProfileSettings = pictureProfileSettings
