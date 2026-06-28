@@ -11,13 +11,20 @@ struct RecipeDetailView: View {
     @Query(sort: \RecipeUserPhoto.date, order: .forward) private var allUserPhotos: [RecipeUserPhoto]
 
     @Query(sort: \PPSlotAssignment.slot) private var allSlotAssignments: [PPSlotAssignment]
+    @Query private var allMRSlotAssignments: [MRSlotAssignment]
 
     @State private var showAddNote = false
     @State private var showFullPhoto = false
+    @State private var showPPSlotPicker = false
+    @State private var showMRSlotPicker = false
     @State private var selectedPhotoItem: PhotosPickerItem?
 
     private var currentSlot: PPSlotAssignment? {
         allSlotAssignments.first { $0.recipeId == recipe.id }
+    }
+
+    private var currentMRSlot: MRSlotAssignment? {
+        allMRSlotAssignments.first { $0.recipeId == recipe.id }
     }
 
     private var recipeNotes: [RecipeNote] {
@@ -90,6 +97,22 @@ struct RecipeDetailView: View {
         }
         .fullScreenCover(isPresented: $showFullPhoto) {
             FullScreenPhotoView(assetName: recipe.samplePhotoAssetName, url: recipe.samplePhotoURL)
+        }
+        .sheet(isPresented: $showPPSlotPicker) {
+            PPSlotPickerSheet(
+                recipe: recipe,
+                currentSlotNumber: currentSlot?.slot,
+                allAssignments: Array(allSlotAssignments),
+                onAssign: assignPPSlot
+            )
+        }
+        .sheet(isPresented: $showMRSlotPicker) {
+            MRSlotPickerSheet(
+                recipe: recipe,
+                currentSlotValue: currentMRSlot?.slot,
+                allAssignments: Array(allMRSlotAssignments),
+                onAssign: assignMRSlot
+            )
         }
         .onChange(of: selectedPhotoItem) { _, newItem in
             guard let newItem else { return }
@@ -219,6 +242,9 @@ struct RecipeDetailView: View {
     @ViewBuilder
     private func creativeStyleView(_ s: CreativeStyleSettings) -> some View {
         SettingRow(label: "Base Style", value: s.style, isHighlighted: true)
+        cameraSlotRow(label: "MR Slot", value: currentMRSlot.map { "MR\($0.slot)" }) {
+            showMRSlotPicker = true
+        }
         SettingRow(label: "Contrast", value: s.contrast.signedString)
         SettingRow(label: "Saturation", value: s.saturation.signedString)
         SettingRow(label: "Sharpness", value: s.sharpness.signedString)
@@ -238,8 +264,8 @@ struct RecipeDetailView: View {
     @ViewBuilder
     private func pictureProfileView(_ s: PictureProfileSettings) -> some View {
         SettingRow(label: "Profile Slot", value: s.profileSlot, isHighlighted: true)
-        if let slot = currentSlot {
-            SettingRow(label: "In My Camera", value: "PP\(slot.slot)")
+        cameraSlotRow(label: "Camera Slot", value: currentSlot.map { "PP\($0.slot)" }) {
+            showPPSlotPicker = true
         }
         // Camera menu order: Black Level → Gamma → Black Gamma → Knee →
         //                    Color Mode → Saturation → Color Phase → Color Depth → Detail
@@ -286,6 +312,55 @@ struct RecipeDetailView: View {
             icon: "lightbulb.fill",
             text: "Picture Profile: MENU → Camera Settings 1 → Picture Profile. Select \(s.profileSlot) and adjust each parameter. White Balance is set separately — it cannot be saved per profile."
         )
+    }
+
+    // MARK: - Camera Slot Row
+
+    @ViewBuilder
+    private func cameraSlotRow(label: String, value: String?, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Text(label)
+                    .foregroundStyle(.primary)
+                Spacer()
+                if let value {
+                    Text(value)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Tap to Assign")
+                        .foregroundStyle(.tertiary)
+                        .italic()
+                }
+                Image(systemName: "chevron.right")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Slot Assignment
+
+    private func assignPPSlot(_ slot: Int?) {
+        if let existing = allSlotAssignments.first(where: { $0.recipeId == recipe.id }) {
+            context.delete(existing)
+        }
+        guard let slot else { return }
+        if let conflict = allSlotAssignments.first(where: { $0.slot == slot && $0.recipeId != recipe.id }) {
+            context.delete(conflict)
+        }
+        context.insert(PPSlotAssignment(slot: slot, recipeId: recipe.id, recipeName: recipe.name))
+    }
+
+    private func assignMRSlot(_ slot: String?) {
+        if let existing = allMRSlotAssignments.first(where: { $0.recipeId == recipe.id }) {
+            context.delete(existing)
+        }
+        guard let slot else { return }
+        if let conflict = allMRSlotAssignments.first(where: { $0.slot == slot && $0.recipeId != recipe.id }) {
+            context.delete(conflict)
+        }
+        context.insert(MRSlotAssignment(slot: slot, recipeId: recipe.id, recipeName: recipe.name))
     }
 
     // MARK: - Info Box
@@ -404,6 +479,156 @@ struct RecipeDetailView: View {
         } else {
             context.insert(RecipeFavorite(recipeId: recipe.id))
         }
+    }
+}
+
+// MARK: - PP Slot Picker Sheet
+
+private struct PPSlotPickerSheet: View {
+    let recipe: Recipe
+    let currentSlotNumber: Int?
+    let allAssignments: [PPSlotAssignment]
+    let onAssign: (Int?) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Button(role: .destructive) {
+                        onAssign(nil); dismiss()
+                    } label: {
+                        Label("Unassign from Slot", systemImage: "xmark.circle")
+                    }
+                    .disabled(currentSlotNumber == nil)
+                }
+
+                Section("PP Slots") {
+                    ForEach(1...10, id: \.self) { slot in
+                        PPSlotPickerRow(
+                            slot: slot,
+                            isSelected: currentSlotNumber == slot,
+                            occupiedBy: allAssignments.first(where: { $0.slot == slot && $0.recipeId != recipe.id })?.recipeName
+                        ) {
+                            onAssign(slot); dismiss()
+                        }
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Camera Slot")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+private struct PPSlotPickerRow: View {
+    let slot: Int
+    let isSelected: Bool
+    let occupiedBy: String?
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("PP\(slot)")
+                    if let name = occupiedBy {
+                        Text(name)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accentColor)
+                        .font(.footnote.weight(.semibold))
+                }
+            }
+        }
+        .foregroundStyle(.primary)
+    }
+}
+
+// MARK: - MR Slot Picker Sheet
+
+private struct MRSlotPickerSheet: View {
+    let recipe: Recipe
+    let currentSlotValue: String?
+    let allAssignments: [MRSlotAssignment]
+    let onAssign: (String?) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    private let slots = ["1", "2", "3", "M1", "M2", "M3", "M4"]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Button(role: .destructive) {
+                        onAssign(nil); dismiss()
+                    } label: {
+                        Label("Unassign from Slot", systemImage: "xmark.circle")
+                    }
+                    .disabled(currentSlotValue == nil)
+                }
+
+                Section("Memory Recall Slots") {
+                    ForEach(slots, id: \.self) { slot in
+                        MRSlotPickerRow(
+                            slot: slot,
+                            isSelected: currentSlotValue == slot,
+                            occupiedBy: allAssignments.first(where: { $0.slot == slot && $0.recipeId != recipe.id })?.recipeName
+                        ) {
+                            onAssign(slot); dismiss()
+                        }
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("MR Slot")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+private struct MRSlotPickerRow: View {
+    let slot: String
+    let isSelected: Bool
+    let occupiedBy: String?
+    let onSelect: () -> Void
+
+    var body: some View {
+        Button(action: onSelect) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("MR\(slot)")
+                    if let name = occupiedBy {
+                        Text(name)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accentColor)
+                        .font(.footnote.weight(.semibold))
+                }
+            }
+        }
+        .foregroundStyle(.primary)
     }
 }
 

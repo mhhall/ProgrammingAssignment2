@@ -6,21 +6,27 @@ struct PPSlotsView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \PPSlotAssignment.slot) private var assignments: [PPSlotAssignment]
     @State private var editingSlot: Int?
+    @State private var infoRecipe: Recipe?
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
                     ForEach(1...10, id: \.self) { slot in
+                        let assignment = assignments.first { $0.slot == slot }
+                        let recipe = assignment.flatMap { a in store.allRecipes.first { $0.id == a.recipeId } }
                         SlotRow(
                             slot: slot,
-                            assignment: assignments.first { $0.slot == slot }
+                            assignment: assignment,
+                            recipe: recipe
                         ) {
                             editingSlot = slot
                         } onClear: {
                             if let a = assignments.first(where: { $0.slot == slot }) {
                                 context.delete(a)
                             }
+                        } onInfo: {
+                            infoRecipe = recipe
                         }
                     }
                 } header: {
@@ -32,6 +38,9 @@ struct PPSlotsView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("PP Slots")
+            .navigationDestination(for: Recipe.self) { recipe in
+                RecipeDetailView(recipe: recipe)
+            }
             .sheet(item: Binding(
                 get: { editingSlot.map { SlotID(id: $0) } },
                 set: { editingSlot = $0?.id }
@@ -61,6 +70,11 @@ struct PPSlotsView: View {
                     editingSlot = nil
                 }
             }
+            .sheet(item: $infoRecipe) { recipe in
+                NavigationStack {
+                    RecipeDetailView(recipe: recipe)
+                }
+            }
         }
     }
 }
@@ -70,35 +84,52 @@ struct PPSlotsView: View {
 private struct SlotRow: View {
     let slot: Int
     let assignment: PPSlotAssignment?
+    let recipe: Recipe?
     let onTap: () -> Void
     let onClear: () -> Void
+    let onInfo: () -> Void
 
     var body: some View {
-        HStack {
-            Text("PP\(slot)")
-                .font(.headline.monospacedDigit())
-                .foregroundStyle(.secondary)
-                .frame(width: 44, alignment: .leading)
+        HStack(spacing: 0) {
+            Button(action: onTap) {
+                HStack {
+                    Text("PP\(slot)")
+                        .font(.headline.monospacedDigit())
+                        .foregroundStyle(.secondary)
+                        .frame(width: 44, alignment: .leading)
 
-            if let assignment {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(assignment.recipeName)
-                        .font(.subheadline)
+                    if let assignment {
+                        Text(assignment.recipeName)
+                            .font(.subheadline)
+                            .foregroundStyle(.primary)
+                    } else {
+                        Text("Empty")
+                            .font(.subheadline)
+                            .foregroundStyle(.tertiary)
+                            .italic()
+                    }
+
+                    Spacer()
+
+                    Image(systemName: "chevron.right")
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.tertiary)
                 }
-            } else {
-                Text("Empty")
-                    .font(.subheadline)
-                    .foregroundStyle(.tertiary)
-                    .italic()
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
 
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.caption2.weight(.semibold))
-                .foregroundStyle(.tertiary)
+            if assignment != nil {
+                Button(action: onInfo) {
+                    Image(systemName: "info.circle")
+                        .foregroundStyle(.secondary)
+                        .font(.body)
+                        .padding(.leading, 12)
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .contentShape(Rectangle())
-        .onTapGesture { onTap() }
         .swipeActions(edge: .trailing) {
             if assignment != nil {
                 Button(role: .destructive, action: onClear) {

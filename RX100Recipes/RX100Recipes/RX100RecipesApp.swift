@@ -11,7 +11,7 @@ struct RX100RecipesApp: App {
                 .environment(store)
                 .modelContainer(for: [
                     RecipeNote.self, RecipeFavorite.self, RecipeUserPhoto.self,
-                    PPSlotAssignment.self, UserRecipe.self
+                    PPSlotAssignment.self, MRSlotAssignment.self, UserRecipe.self
                 ])
         }
     }

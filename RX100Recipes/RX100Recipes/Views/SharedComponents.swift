@@ -29,6 +29,7 @@ struct CategoryBadge: View {
         case .gray:   return .gray
         case .purple: return .purple
         case .teal:   return .teal
+        case .indigo: return .indigo
         }
     }
 }

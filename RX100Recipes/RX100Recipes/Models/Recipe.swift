@@ -12,6 +12,7 @@ enum RecipeCategory: String, CaseIterable, Identifiable, Equatable {
     case blackAndWhite = "B&W"
     case log = "Log / Flat"
     case travel = "Travel"
+    case other = "Other"
 
     var id: String { rawValue }
 
@@ -25,6 +26,7 @@ enum RecipeCategory: String, CaseIterable, Identifiable, Equatable {
         case .blackAndWhite: return "circle.lefthalf.filled"
         case .log:           return "waveform"
         case .travel:        return "globe.europe.africa.fill"
+        case .other:         return "tag"
         }
     }
 
@@ -38,11 +40,12 @@ enum RecipeCategory: String, CaseIterable, Identifiable, Equatable {
         case .blackAndWhite: return .gray
         case .log:           return .purple
         case .travel:        return .teal
+        case .other:         return .indigo
         }
     }
 
     enum CategoryColor: String {
-        case pink, green, orange, blue, brown, gray, purple, teal
+        case pink, green, orange, blue, brown, gray, purple, teal, indigo
     }
 }
 
@@ -301,6 +304,21 @@ final class PPSlotAssignment {
     var recipeName: String  // denormalised for display
 
     init(slot: Int, recipeId: UUID, recipeName: String) {
+        self.slot = slot
+        self.recipeId = recipeId
+        self.recipeName = recipeName
+    }
+}
+
+// MARK: - MR Slot Assignment
+
+@Model
+final class MRSlotAssignment {
+    var slot: String         // "1", "2", "3", "M1", "M2", "M3", "M4"
+    var recipeId: UUID
+    var recipeName: String   // denormalised for display
+
+    init(slot: String, recipeId: UUID, recipeName: String) {
         self.slot = slot
         self.recipeId = recipeId
         self.recipeName = recipeName
