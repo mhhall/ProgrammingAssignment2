@@ -83,6 +83,11 @@ struct RecipeDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                ShareLink(item: shareText) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     toggleFavorite()
                 } label: {
@@ -472,6 +477,73 @@ struct RecipeDetailView: View {
     }
 
     // MARK: - Actions
+
+    private var shareText: String {
+        var lines: [String] = []
+        lines.append("Sony RX100 VII Recipe: \(recipe.name)")
+        lines.append("\(recipe.category.rawValue) · \(recipe.settingType.rawValue)")
+        if !recipe.description.isEmpty {
+            lines.append("")
+            lines.append(recipe.description)
+        }
+        lines.append("")
+        lines.append("── Camera Settings ──")
+        if let cs = recipe.creativeStyleSettings {
+            lines.append("Base Style: \(cs.style)")
+            lines.append("Contrast: \(cs.contrast.signedString)")
+            lines.append("Saturation: \(cs.saturation.signedString)")
+            lines.append("Sharpness: \(cs.sharpness.signedString)")
+            lines.append("White Balance: \(cs.whiteBalance)")
+            if let s = cs.wbShift { lines.append("WB Color Filter: \(s)") }
+            lines.append("ISO: \(cs.iso)")
+            lines.append("Exposure Comp: \(cs.exposureComp)")
+        } else if let pp = recipe.pictureProfileSettings {
+            lines.append("Profile Slot: \(pp.profileSlot)")
+            lines.append("Black Level: \(pp.blackLevel.signedString)")
+            lines.append("Gamma: \(pp.gamma)")
+            if let r = pp.blackGammaRange { lines.append("Black Gamma Range: \(r)") }
+            if let l = pp.blackGammaLevel { lines.append("Black Gamma Level: \(l.signedString)") }
+            if let km = pp.kneeMode {
+                lines.append("Knee Mode: \(km)")
+                if km == "Auto", let s = pp.kneeAutoSensitivity { lines.append("Knee Sensitivity: \(s)") }
+                if km == "Manual" {
+                    if let pt = pp.kneeManualPoint  { lines.append("Knee Point: \(pt)") }
+                    if let sl = pp.kneeManualSlope  { lines.append("Knee Slope: \(sl.signedString)") }
+                }
+            }
+            lines.append("Color Mode: \(pp.colorMode)")
+            lines.append("Saturation: \(pp.saturation.signedString)")
+            lines.append("Color Phase: \(pp.colorPhase.signedString)")
+            if let r = pp.colorDepthR { lines.append("Color Depth R: \(r.signedString)") }
+            if let g = pp.colorDepthG { lines.append("Color Depth G: \(g.signedString)") }
+            if let b = pp.colorDepthB { lines.append("Color Depth B: \(b.signedString)") }
+            if let c = pp.colorDepthC { lines.append("Color Depth C: \(c.signedString)") }
+            if let m = pp.colorDepthM { lines.append("Color Depth M: \(m.signedString)") }
+            if let y = pp.colorDepthY { lines.append("Color Depth Y: \(y.signedString)") }
+            lines.append("Detail Level: \(pp.detailLevel.signedString)")
+            if let dm = pp.detailMode          { lines.append("Detail Mode: \(dm)") }
+            if let vh = pp.detailVHBalance     { lines.append("Detail V/H Balance: \(vh.signedString)") }
+            if let bw = pp.detailBWBalance     { lines.append("Detail B/W Balance: \(bw)") }
+            if let lm = pp.detailLimit         { lines.append("Detail Limit: \(lm)") }
+            if let cr = pp.detailCrispening    { lines.append("Crispening: \(cr)") }
+            if let hl = pp.detailHighLightDetail { lines.append("Highlight Detail: \(hl)") }
+            lines.append("White Balance: \(pp.whiteBalance)")
+            if let s = pp.wbShift { lines.append("WB Color Filter: \(s)") }
+            lines.append("ISO: \(pp.iso)")
+            lines.append("Exposure Comp: \(pp.exposureComp)")
+        }
+        if !recipe.tags.isEmpty {
+            lines.append("")
+            lines.append("Tags: \(recipe.tags.joined(separator: ", "))")
+        }
+        if !recipe.source.isEmpty {
+            lines.append("Source: \(recipe.source)")
+        }
+        if let url = recipe.sourceURL {
+            lines.append(url.absoluteString)
+        }
+        return lines.joined(separator: "\n")
+    }
 
     private func toggleFavorite() {
         if let existing = allFavorites.first(where: { $0.recipeId == recipe.id }) {
