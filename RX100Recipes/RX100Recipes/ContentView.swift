@@ -14,7 +14,7 @@ struct ContentView: View {
                 .tabItem { Label("Favorites", systemImage: "star.fill") }
 
             PPSlotsView()
-                .tabItem { Label("PP Slots", systemImage: "square.grid.2x2") }
+                .tabItem { Label("Camera Memory", systemImage: "square.grid.2x2") }
 
             NotesListView()
                 .tabItem { Label("My Notes", systemImage: "note.text") }

@@ -1,90 +1,154 @@
 import SwiftUI
 import SwiftData
 
+// MARK: - Camera Memory View
+
+private enum SlotMode { case pp, mr }
+
 struct PPSlotsView: View {
     @Environment(RecipeStore.self) private var store
     @Environment(\.modelContext) private var context
-    @Query(sort: \PPSlotAssignment.slot) private var assignments: [PPSlotAssignment]
-    @State private var editingSlot: Int?
+    @Query(sort: \PPSlotAssignment.slot) private var ppAssignments: [PPSlotAssignment]
+    @Query private var mrAssignments: [MRSlotAssignment]
+
+    @State private var mode: SlotMode = .pp
+    @State private var editingPPSlot: Int?
+    @State private var editingMRSlot: String?
     @State private var infoRecipe: Recipe?
+
+    private let mrSlots = ["1", "2", "3", "M1", "M2", "M3", "M4"]
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    ForEach(1...10, id: \.self) { slot in
-                        let assignment = assignments.first { $0.slot == slot }
-                        let recipe = assignment.flatMap { a in store.allRecipes.first { $0.id == a.recipeId } }
-                        SlotRow(
-                            slot: slot,
-                            assignment: assignment,
-                            recipe: recipe
-                        ) {
-                            editingSlot = slot
-                        } onClear: {
-                            if let a = assignments.first(where: { $0.slot == slot }) {
-                                context.delete(a)
-                            }
-                        } onInfo: {
-                            infoRecipe = recipe
-                        }
+            Group {
+                if mode == .pp { ppList } else { mrList }
+            }
+            .navigationTitle("Camera Memory")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Picker("", selection: $mode) {
+                        Text("PP Slots").tag(SlotMode.pp)
+                        Text("MR Slots").tag(SlotMode.mr)
                     }
-                } header: {
-                    Text("Tap a slot to assign or change a recipe")
-                        .textCase(nil)
-                } footer: {
-                    Text("Only Picture Profile recipes can be assigned to PP slots. Each recipe can occupy only one slot.")
+                    .pickerStyle(.segmented)
+                    .frame(width: 200)
                 }
             }
-            .listStyle(.insetGrouped)
-            .navigationTitle("PP Slots")
             .navigationDestination(for: Recipe.self) { recipe in
                 RecipeDetailView(recipe: recipe)
             }
+            // PP slot assignment picker
             .sheet(item: Binding(
-                get: { editingSlot.map { SlotID(id: $0) } },
-                set: { editingSlot = $0?.id }
+                get: { editingPPSlot.map { PPSlotID(id: $0) } },
+                set: { editingPPSlot = $0?.id }
             )) { slotID in
-                SlotPickerView(
+                PPTabSlotPickerView(
                     slot: slotID.id,
-                    currentRecipeId: assignments.first(where: { $0.slot == slotID.id })?.recipeId,
-                    ppRecipes: store.allRecipes.filter { $0.settingType == .pictureProfile }
+                    currentRecipeId: ppAssignments.first { $0.slot == slotID.id }?.recipeId,
+                    recipes: store.allRecipes.filter { $0.settingType == .pictureProfile }
                 ) { selected in
-                    // Remove existing assignment for this slot
-                    if let existing = assignments.first(where: { $0.slot == slotID.id }) {
+                    if let existing = ppAssignments.first(where: { $0.slot == slotID.id }) {
                         context.delete(existing)
                     }
                     if let recipe = selected {
-                        // Also remove recipe from any other slot it currently occupies
-                        if let otherSlot = assignments.first(where: {
+                        if let other = ppAssignments.first(where: {
                             $0.recipeId == recipe.id && $0.slot != slotID.id
-                        }) {
-                            context.delete(otherSlot)
-                        }
+                        }) { context.delete(other) }
                         context.insert(PPSlotAssignment(
-                            slot: slotID.id,
-                            recipeId: recipe.id,
-                            recipeName: recipe.name
+                            slot: slotID.id, recipeId: recipe.id, recipeName: recipe.name
                         ))
                     }
-                    editingSlot = nil
+                    editingPPSlot = nil
                 }
             }
-            .sheet(item: $infoRecipe) { recipe in
-                NavigationStack {
-                    RecipeDetailView(recipe: recipe)
+            // MR slot assignment picker
+            .sheet(item: Binding(
+                get: { editingMRSlot.map { MRSlotID(id: $0) } },
+                set: { editingMRSlot = $0?.id }
+            )) { slotID in
+                MRTabSlotPickerView(
+                    slot: slotID.id,
+                    currentRecipeId: mrAssignments.first { $0.slot == slotID.id }?.recipeId,
+                    recipes: store.allRecipes.filter { $0.settingType == .creativeStyle }
+                ) { selected in
+                    if let existing = mrAssignments.first(where: { $0.slot == slotID.id }) {
+                        context.delete(existing)
+                    }
+                    if let recipe = selected {
+                        if let other = mrAssignments.first(where: {
+                            $0.recipeId == recipe.id && $0.slot != slotID.id
+                        }) { context.delete(other) }
+                        context.insert(MRSlotAssignment(
+                            slot: slotID.id, recipeId: recipe.id, recipeName: recipe.name
+                        ))
+                    }
+                    editingMRSlot = nil
                 }
+            }
+            // Info sheet → recipe detail
+            .sheet(item: $infoRecipe) { recipe in
+                NavigationStack { RecipeDetailView(recipe: recipe) }
             }
         }
     }
+
+    // MARK: - PP List
+
+    private var ppList: some View {
+        List {
+            Section {
+                ForEach(1...10, id: \.self) { slot in
+                    let assignment = ppAssignments.first { $0.slot == slot }
+                    let recipe = assignment.flatMap { a in store.allRecipes.first { $0.id == a.recipeId } }
+                    CameraSlotRow(slotLabel: "PP\(slot)", recipeName: assignment?.recipeName) {
+                        editingPPSlot = slot
+                    } onClear: {
+                        if let a = assignment { context.delete(a) }
+                    } onInfo: {
+                        infoRecipe = recipe
+                    }
+                }
+            } header: {
+                Text("Tap a slot to assign or change a recipe").textCase(nil)
+            } footer: {
+                Text("Only Picture Profile recipes can be assigned to PP slots. Each recipe can occupy only one slot.")
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
+
+    // MARK: - MR List
+
+    private var mrList: some View {
+        List {
+            Section {
+                ForEach(mrSlots, id: \.self) { slot in
+                    let assignment = mrAssignments.first { $0.slot == slot }
+                    let recipe = assignment.flatMap { a in store.allRecipes.first { $0.id == a.recipeId } }
+                    CameraSlotRow(slotLabel: "MR\(slot)", recipeName: assignment?.recipeName) {
+                        editingMRSlot = slot
+                    } onClear: {
+                        if let a = assignment { context.delete(a) }
+                    } onInfo: {
+                        infoRecipe = recipe
+                    }
+                }
+            } header: {
+                Text("Tap a slot to assign or change a recipe").textCase(nil)
+            } footer: {
+                Text("Only Creative Style recipes can be assigned to MR slots. Each recipe can occupy only one slot.")
+            }
+        }
+        .listStyle(.insetGrouped)
+    }
 }
 
-// MARK: - Slot Row
+// MARK: - Shared Slot Row
 
-private struct SlotRow: View {
-    let slot: Int
-    let assignment: PPSlotAssignment?
-    let recipe: Recipe?
+private struct CameraSlotRow: View {
+    let slotLabel: String
+    let recipeName: String?
     let onTap: () -> Void
     let onClear: () -> Void
     let onInfo: () -> Void
@@ -93,13 +157,13 @@ private struct SlotRow: View {
         HStack(spacing: 0) {
             Button(action: onTap) {
                 HStack {
-                    Text("PP\(slot)")
+                    Text(slotLabel)
                         .font(.headline.monospacedDigit())
                         .foregroundStyle(.secondary)
-                        .frame(width: 44, alignment: .leading)
+                        .frame(width: 52, alignment: .leading)
 
-                    if let assignment {
-                        Text(assignment.recipeName)
+                    if let recipeName {
+                        Text(recipeName)
                             .font(.subheadline)
                             .foregroundStyle(.primary)
                     } else {
@@ -119,7 +183,7 @@ private struct SlotRow: View {
             }
             .buttonStyle(.plain)
 
-            if assignment != nil {
+            if recipeName != nil {
                 Button(action: onInfo) {
                     Image(systemName: "info.circle")
                         .foregroundStyle(.secondary)
@@ -131,7 +195,7 @@ private struct SlotRow: View {
             }
         }
         .swipeActions(edge: .trailing) {
-            if assignment != nil {
+            if recipeName != nil {
                 Button(role: .destructive, action: onClear) {
                     Label("Clear", systemImage: "xmark")
                 }
@@ -140,22 +204,26 @@ private struct SlotRow: View {
     }
 }
 
-// MARK: - Slot Picker Sheet
+// MARK: - Identifiable slot wrappers
 
-private struct SlotID: Identifiable { let id: Int }
+private struct PPSlotID: Identifiable { let id: Int }
+private struct MRSlotID: Identifiable { let id: String }
 
-private struct SlotPickerRow: View {
+// MARK: - Shared Recipe Picker Row
+
+private struct RecipePickerRow: View {
     let recipe: Recipe
+    let subtitle: String?
     let isSelected: Bool
     let onSelect: (Recipe?) -> Void
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(recipe.name)
                     .font(.subheadline.weight(.medium))
-                if let pp = recipe.pictureProfileSettings {
-                    Text("\(pp.gamma) · \(pp.colorMode)")
+                if let subtitle {
+                    Text(subtitle)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -172,10 +240,12 @@ private struct SlotPickerRow: View {
     }
 }
 
-private struct SlotPickerView: View {
+// MARK: - PP Tab Slot Picker
+
+private struct PPTabSlotPickerView: View {
     let slot: Int
     let currentRecipeId: UUID?
-    let ppRecipes: [Recipe]
+    let recipes: [Recipe]
     let onSelect: (Recipe?) -> Void
     @Environment(\.dismiss) private var dismiss
 
@@ -183,17 +253,15 @@ private struct SlotPickerView: View {
         NavigationStack {
             List {
                 Section {
-                    Button(role: .destructive) {
-                        onSelect(nil)
-                    } label: {
+                    Button(role: .destructive) { onSelect(nil) } label: {
                         Label("Clear Slot PP\(slot)", systemImage: "xmark.circle")
                     }
                 }
-
                 Section("Picture Profile Recipes") {
-                    ForEach(ppRecipes.sorted { $0.name < $1.name }) { recipe in
-                        SlotPickerRow(
+                    ForEach(recipes.sorted { $0.name < $1.name }) { recipe in
+                        RecipePickerRow(
                             recipe: recipe,
+                            subtitle: recipe.pictureProfileSettings.map { "\($0.gamma) · \($0.colorMode)" },
                             isSelected: recipe.id == currentRecipeId,
                             onSelect: onSelect
                         )
@@ -202,6 +270,46 @@ private struct SlotPickerView: View {
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Assign PP\(slot)")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+}
+
+// MARK: - MR Tab Slot Picker
+
+private struct MRTabSlotPickerView: View {
+    let slot: String
+    let currentRecipeId: UUID?
+    let recipes: [Recipe]
+    let onSelect: (Recipe?) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section {
+                    Button(role: .destructive) { onSelect(nil) } label: {
+                        Label("Clear Slot MR\(slot)", systemImage: "xmark.circle")
+                    }
+                }
+                Section("Creative Style Recipes") {
+                    ForEach(recipes.sorted { $0.name < $1.name }) { recipe in
+                        RecipePickerRow(
+                            recipe: recipe,
+                            subtitle: recipe.creativeStyleSettings.map { $0.style },
+                            isSelected: recipe.id == currentRecipeId,
+                            onSelect: onSelect
+                        )
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Assign MR\(slot)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
